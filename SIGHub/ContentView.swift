@@ -7,15 +7,18 @@
 
 import SwiftUI
 
+let accentColor = UIColor(named: "AccentColor")
+
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            VStack {
+                Text("Hello, World!")
+                    .font(.headline)
+            }
+            .navigationTitle("Showcase")
         }
-        .padding()
+        .padding(.horizontal, 10)
     }
 }
 
