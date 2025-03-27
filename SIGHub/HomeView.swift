@@ -31,8 +31,8 @@ struct HomeView: View {
                     //                        Text(category)
                     //                    }
                     ForEach(categories, id:\.self) { category in
-                        HStack {
-                            Text(category)
+                        Group {
+                            Color.red
                             
                         }
                     }
