@@ -36,7 +36,7 @@ class SIGModel: Identifiable {
     
     static func getData() -> [SIGModel] {
         let sigLists: [SIGModel] = [
-            SIGModel("TrApple", "Traveling", "TrApple is a Student Interest Group for travel enthusiasts who are passionate about exploring new places, cultures, and experiences. Whether it’s discovering hidden gems nearby or planning exciting international adventures, TrApple brings together curious minds who share a love for travel. Through fun trips, travel talks, cultural exchanges, and planning sessions, members connect over their wanderlust and create unforgettable memories. Come for the destinations, stay for the stories!", "Morning", "Physical", "Trapple", "wa.link/hehe"),
+            SIGModel("TrApple", "Traveling", "TrApple is a Student Interest Group for travel enthusiasts who are passionate about exploring new places, cultures, and experiences. Whether it’s discovering hidden gems nearby or planning exciting international adventures, TrApple brings together curious minds who share a love for travel. Through fun trips, travel talks, cultural exchanges, and planning sessions, members connect over their wanderlust and create unforgettable memories. Come for the destinations, stay for the stories!", "Morning", "Outdoor", "Trapple", "wa.link/hehe"),
             SIGModel("Mewing Club", "Gym", "we’re all about bringing fitness enthusiasts together in a supportive and motivating environment...", "Afternoon", "Physical", "Mewing", "wa.link/hehe")]
         
         return sigLists
