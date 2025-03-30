@@ -119,9 +119,12 @@ struct HomeView: View {
             }
             .navigationDestination(for: String.self) {category in
                 // For SIGCategorized title
-                List(categorizedSIGList[category] ?? []) {
-                    Text($0.name)
-                }
+//                List(categorizedSIGList[category] ?? []) {
+//                    Text($0.name)
+//                }
+                
+                SIGListView(SIGList: categorizedSIGList[category] ?? [])
+                
             }
             
             Spacer()
