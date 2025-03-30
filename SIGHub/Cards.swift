@@ -39,6 +39,10 @@ struct SIGCard: View {
     init() {
         self.SIG = SIGModel.getSample()
     }
+    
+    init(_ SIG: SIGModel) {
+        self.SIG = SIG
+    }
 }
 
 #Preview {

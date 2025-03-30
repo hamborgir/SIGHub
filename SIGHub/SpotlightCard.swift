@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SpotlightCard: View {
     var SIG: SIGModel
+    
     var body: some View {
         ZStack {
             // ini nanti ganti image
@@ -55,8 +56,7 @@ struct SpotlightCard: View {
     }
     
     init(_ SIG: SIGModel) {
-        self.SIG = SIG
-    }
+        self.SIG = SIG}
 }
 
 #Preview {

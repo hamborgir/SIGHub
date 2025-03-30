@@ -7,28 +7,30 @@
 
 import SwiftUI
 
-struct SearchObjectList: View {
-    @State var SIGPict: String = ""
-    @State var SIGName: String = ""
-    @State var SIGDescription: String = ""
-    @State var SIGCategory: String = ""
+struct SIGListObjectView: View {
+    var SIG: SIGModel
+    
+    var SIGPict: String = ""
+    var SIGName: String = ""
+    var SIGDescription: String = ""
+    var SIGCategory: String = ""
     
     var body: some View {
         HStack {
-            Image(SIGPict)
+            Image(SIG.image)
                 .resizable()
                 .frame(width: 90, height: 65)
                 .cornerRadius(10)
             
             VStack (alignment: .leading) {
                 
-                Text(SIGCategory)
+                Text(SIG.category)
                     .font(.caption2)
                     .foregroundColor(.pink)
-                Text(SIGName)
+                Text(SIG.name)
                     .font(.headline)
                 
-                Text(SIGDescription)
+                Text(SIG.desc)
                     .font(.caption)
                     .foregroundStyle(.gray)
                     .lineLimit(2)
@@ -40,8 +42,16 @@ struct SearchObjectList: View {
         .frame(width: 350)
         .foregroundColor(.black)
         }
+    
+    init(_ SIG: SIGModel) {
+        self.SIG = SIG
+    }
+    
+    init() {
+        self.SIG = SIGModel.getSample()
+    }
 }
 
 #Preview {
-    SearchObjectList()
+    SIGListObjectView()
 }

@@ -9,24 +9,27 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
+    private var navtitle: String = "Showcase"
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
+    @State private var categorizedSIGList: [String: [SIGModel]] = Dictionary(grouping: SIGModel.getData()) { $0.category }
+    @State private var path = NavigationPath()
     
     @Environment(\.modelContext) private var context
     
     //    @Query() var SIGList: [SIGModel]
     
-    var navtitle: String = "Showcase"
     
     
-//    Data khusus untuk bagian searching
+    //    Data khusus untuk bagian searching
     @State private var sessionFilter = ["All", "Morning", "Afternoon"]
     @State private var choosenFilter = "All"
     @State private var searchText: String = ""
     @State private var clickedSearch = false
     @State private var enterSearch = false
     
+    // computed properties
     var filteredSearchedData: [SIGModel] {
         SIGList
             .filter {
@@ -35,7 +38,6 @@ struct HomeView: View {
                 (choosenFilter == "All" || $0.session.contains(choosenFilter))
             }
     }
-    
     var searchedData: [SIGModel] {
         SIGList
             .filter {
@@ -43,71 +45,86 @@ struct HomeView: View {
     }
     
     
+    
     var body: some View {
-        NavigationStack {
-                VStack {
+        NavigationStack(path: $path) {
+            VStack {
+                
+                if (enterSearch) {
+                    //                        Search Page
                     
-                    if(enterSearch){
-//                        Search Page
-                        
-                        Picker("Filter", selection: $choosenFilter){
-                            ForEach (sessionFilter, id: \.self){
-                                Text($0)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .padding([.leading, .trailing], 15)
-                        
-                        if filteredSearchedData.isEmpty {
-                            noResultView()
-                        }else {
-                            ScrollView {
-                                ForEach(filteredSearchedData){ sig in
-                                    NavigationLink(destination: ContentView()){
-                                        SearchObjectList(SIGPict: sig.image, SIGName: sig.name, SIGDescription: sig.desc, SIGCategory: sig.category)
-                                            .listRowInsets(EdgeInsets())
-                                            .listRowSeparator(.hidden)
-                                    }
-                                    
-                                }
-                            }
-                            .padding(.top, 10)
-                        }
-                        Spacer()
-                    }
-                    else {
-                        ScrollView(.vertical) {
-                            VStack {
-                                ScrollView(.horizontal) {
-                                    HStack {
-                                        SpotlightCard(SIGModel.getSample())
-                                        SpotlightCard(SIGModel.getSample())
-                                    }
-                                }
-                                .navigationTitle(navtitle)
-                            }
+                    Picker("Filter", selection: $choosenFilter){
+                        ForEach (sessionFilter, id: \.self){
+                            Text($0)
                         }
                     }
+                    .pickerStyle(.segmented)
+                    .padding([.leading, .trailing], 15)
                     
-                }
-                .searchable(text: $searchText, isPresented: $clickedSearch)
-                .searchSuggestions{
-                    if(!searchText.isEmpty){
-                        ForEach(searchedData){ sig in
-                            suggestionView(sig: sig)
+                    if filteredSearchedData.isEmpty {
+                        noResultView()
+                    } else {
+                        ScrollView {
+                            ForEach(filteredSearchedData){ SIG in
+                                NavigationLink(destination: ContentView()){
+                                    SIGListObjectView(SIG)
+                                        .listRowInsets(EdgeInsets())
+                                        .listRowSeparator(.hidden)
+                                }
+                                
+                            }
                         }
-                        .scrollContentBackground(.hidden)
+                        .padding(.top, 10)
+                    }
+                    Spacer()
+                }
+                else {
+                    // Home Page Structure
+                    ScrollView(.vertical) {
+                        VStack {
+                            
+                            // Spotlight Event
+                            SpotlightView(SIGList: $SIGList)
+                                .padding(.vertical, 5)
+                            
+                            
+                            // Categorized
+                            SIGCategorizedView(categories: $categories, categorizedSIGList: $categorizedSIGList)
+                        }
                     }
                 }
-                .onSubmit (of: .search) {
-                    enterSearch = true
-                }
-                .onChange(of: searchText) {
-                    if searchText.isEmpty {
-                        enterSearch = false
+                
+            }
+            .searchable(text: $searchText, isPresented: $clickedSearch)
+            .searchSuggestions{
+                if(!searchText.isEmpty){
+                    ForEach(searchedData){ SIG in
+                        suggestionView(SIG: SIG)
                     }
+                    .scrollContentBackground(.hidden)
                 }
-                Spacer()
+            }
+            .onSubmit (of: .search) {
+                enterSearch = true
+            }
+            .onChange(of: searchText) {
+                if searchText.isEmpty {
+                    enterSearch = false
+                }
+            }
+            .navigationTitle(navtitle)
+            .navigationDestination(for: SIGModel.self) { SIG in
+                // For spotlight and SIGcards
+                Text(SIG.name)
+            }
+            .navigationDestination(for: String.self) {category in
+                // For SIGCategorized title
+                List(categorizedSIGList[category] ?? []) {
+                    Text($0.name)
+                }
+            }
+            
+            Spacer()
         }
         .padding(.horizontal, 10)
     }
@@ -134,10 +151,13 @@ struct SpotlightView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(SIGList) { SIG in
-                    SpotlightCard(SIG)
+                    NavigationLink(value: SIG) {
+                        SpotlightCard(SIG)
+                    }
                 }
             }
         }
+
     }
 }
 
@@ -152,17 +172,55 @@ struct noResultView: View {
 }
 
 struct suggestionView: View {
-    @State var sig: SIGModel
+    @State var SIG: SIGModel
     
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.gray)
-            Text(sig.name)
+            Text(SIG.name)
                 .multilineTextAlignment(.leading)
                 .foregroundColor(.gray)
         }
-        .searchCompletion(sig.name)
+        .searchCompletion(SIG.name)
         .listRowSeparator(.hidden)
+    }
+}
+
+struct SIGCategorizedView: View {
+    @Binding var categories: [String]
+    @Binding var categorizedSIGList: [String: [SIGModel]]
+    
+    var body: some View {
+        ForEach(categories, id:\.self) { category in
+            Group {
+                NavigationLink(value: category) {
+                    HStack {
+                        Text(category)
+                            .font(.title.bold())
+                            .foregroundColor(.black)
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray)
+                            .padding(.leading, 0)
+                    }
+                }
+                
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 5)
+            .padding(.bottom, 0)
+
+            ScrollView(.horizontal) {
+                HStack {
+                    let filteredSIG = categorizedSIGList[category] ?? []
+                    ForEach(filteredSIG, id:\.id) { SIG in
+                        NavigationLink(value: SIG) {
+                            SIGCard(SIG)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
