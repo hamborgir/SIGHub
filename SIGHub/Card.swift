@@ -17,13 +17,12 @@ struct SIGCard: View {
         VStack {
             // Image
             // ganti image nanti
-            ZStack {
-                Color.blue
-                Text("😍").font(.system(size: 100))
-            }
-            .frame(width: self.width, height: self.height*(6/10))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.bottom, 10)
+            Image(SIG.image)
+                .resizable()
+                .frame(width: self.width, height: self.height*(6/10))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(.bottom, 10)
+                .scaledToFit()
             
             // SIG property
             Group {

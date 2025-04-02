@@ -81,7 +81,7 @@ struct HomeView: View {
                 }
                 else {
                     // Home Page Structure
-                    ScrollView(.vertical) {
+                    ScrollView(.vertical, showsIndicators: false) {
                         VStack {
                             
                             // Spotlight Event
@@ -116,6 +116,9 @@ struct HomeView: View {
             .navigationTitle(navtitle)
             .navigationDestination(for: SIGModel.self) { SIG in
                 // For spotlight and SIGcards
+                Image(SIG.image)
+                    .resizable()
+                    .frame(width: 300, height: 200)
                 Text(SIG.name)
                     .font(.title)
                     .fontWeight(.bold)
@@ -215,7 +218,7 @@ struct SIGCategorizedView: View {
             .padding(.top, 5)
             .padding(.bottom, 0)
 
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     let filteredSIG = categorizedSIGList[category] ?? []
                     ForEach(filteredSIG, id:\.id) { SIG in
