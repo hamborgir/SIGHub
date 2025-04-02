@@ -15,10 +15,14 @@ struct SIGListView: View {
     var body: some View {
         Text("")
         ScrollView(.vertical) {
-            ForEach(SIGList, id:\.self) {
-                SIGListObjectView($0)
-                Divider()
-                    .frame(width: 300)
+            ForEach(SIGList, id:\.self) {SIG in
+                NavigationLink(value: SIG) {
+                    VStack {
+                        SIGListObjectView(SIG)
+                        Divider()
+                            .frame(width: 300)
+                    }
+                }
             }
             
         }

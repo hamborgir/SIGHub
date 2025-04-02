@@ -66,10 +66,11 @@ struct HomeView: View {
                     } else {
                         ScrollView {
                             ForEach(filteredSearchedData){ SIG in
-                                NavigationLink(destination: ContentView()){
+                                NavigationLink(value: SIG) {
                                     SIGListObjectView(SIG)
                                         .listRowInsets(EdgeInsets())
                                         .listRowSeparator(.hidden)
+                                    
                                 }
                                 
                             }
@@ -116,12 +117,12 @@ struct HomeView: View {
             .navigationDestination(for: SIGModel.self) { SIG in
                 // For spotlight and SIGcards
                 Text(SIG.name)
+                    .font(.title)
+                    .fontWeight(.bold)
+                Text(SIG.realName)
             }
             .navigationDestination(for: String.self) {category in
                 // For SIGCategorized title
-//                List(categorizedSIGList[category] ?? []) {
-//                    Text($0.name)
-//                }
                 
                 SIGListView(SIGList: categorizedSIGList[category] ?? [])
                 
