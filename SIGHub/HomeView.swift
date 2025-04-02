@@ -33,7 +33,7 @@ struct HomeView: View {
     var filteredSearchedData: [SIGModel] {
         SIGList
             .filter {
-                (searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText))}
+                (searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) || $0.realName.localizedCaseInsensitiveContains(searchText))}
             .filter {
                 (choosenFilter == "All" || $0.session.contains(choosenFilter))
             }
