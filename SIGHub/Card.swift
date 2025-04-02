@@ -27,9 +27,15 @@ struct SIGCard: View {
             
             // SIG property
             Group {
-                Text(SIG.category.uppercased()).font(.caption).foregroundColor(.gray).bold()
-                Text(SIG.name).font(.headline)
-                Text(SIG.session).font(.caption2)
+                Text(SIG.category.uppercased())
+                    .font(.caption)
+                    .foregroundColor(.gray).bold()
+                Text(SIG.name)
+                    .font(.headline)
+                    .foregroundColor(.black)
+                Text(SIG.session)
+                    .font(.caption2)
+                    .foregroundColor(.black)
             }
             .frame(maxWidth:.infinity, alignment: .leading)
             
