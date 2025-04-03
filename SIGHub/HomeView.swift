@@ -124,12 +124,6 @@ struct HomeView: View {
                     .fontWeight(.bold)
                 Text(SIG.realName)
             }
-            .navigationDestination(for: String.self) {category in
-                // For SIGCategorized title
-                
-                SIGListView(SIGList: categorizedSIGList[category] ?? [], category: category)
-                
-            }
             
             Spacer()
         }
@@ -201,7 +195,7 @@ struct SIGCategorizedView: View {
     var body: some View {
         ForEach(categories, id:\.self) { category in
             Group {
-                NavigationLink(value: category) {
+                NavigationLink(destination: SIGListView(SIGList: categorizedSIGList[category] ?? [], category: category), label: {
                     HStack {
                         Text(category)
                             .font(.title.bold())
@@ -211,8 +205,7 @@ struct SIGCategorizedView: View {
                             .foregroundColor(.gray)
                             .padding(.leading, 0)
                     }
-                }
-                
+                })
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 5)

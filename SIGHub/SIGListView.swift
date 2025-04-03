@@ -14,7 +14,7 @@ struct SIGListView: View {
     var category: String
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView(.vertical) {
                 ForEach(SIGList, id:\.self) {SIG in
                     NavigationLink(value: SIG) {
