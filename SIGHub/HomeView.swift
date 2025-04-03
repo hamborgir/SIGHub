@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    private var navtitle: String = "Showcase"
+    private var navtitle: String = "Home"
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
@@ -51,7 +51,7 @@ struct HomeView: View {
             VStack {
                 
                 if (enterSearch) {
-                    //                        Search Page
+//                        Search Page
                     
                     Picker("Filter", selection: $choosenFilter){
                         ForEach (sessionFilter, id: \.self){
@@ -127,7 +127,7 @@ struct HomeView: View {
             .navigationDestination(for: String.self) {category in
                 // For SIGCategorized title
                 
-                SIGListView(SIGList: categorizedSIGList[category] ?? [])
+                SIGListView(SIGList: categorizedSIGList[category] ?? [], category: category)
                 
             }
             
