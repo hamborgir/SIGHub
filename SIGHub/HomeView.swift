@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    private var navtitle: String = "Showcase"
+    private var navtitle: String = "Discover" //nanti ganti
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
@@ -116,6 +116,8 @@ struct HomeView: View {
             .navigationTitle(navtitle)
             .navigationDestination(for: SIGModel.self) { SIG in
                 // For spotlight and SIGcards
+                // nanti ganti jadi DetailsView
+                
                 Image(SIG.image)
                     .resizable()
                     .frame(width: 300, height: 200)
@@ -125,9 +127,15 @@ struct HomeView: View {
                 Text(SIG.realName)
             }
             .navigationDestination(for: String.self) {category in
-                // For SIGCategorized title
+                // Categorized SIG List
                 
                 SIGListView(SIGList: categorizedSIGList[category] ?? [])
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            Text(category)
+                                .bold()
+                        }
+                    }
                 
             }
             
