@@ -51,7 +51,7 @@ struct HomeView: View {
             VStack {
                 
                 if (enterSearch) {
-                    //                        Search Page
+//                        Search Page
                     
                     Picker("Filter", selection: $choosenFilter){
                         ForEach (sessionFilter, id: \.self){
