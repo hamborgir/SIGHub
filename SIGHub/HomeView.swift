@@ -63,6 +63,7 @@ struct HomeView: View {
                     
                     if filteredSearchedData.isEmpty {
                         noResultView()
+                            
                     } else {
                         ScrollView {
                             ForEach(filteredSearchedData){ SIG in
@@ -114,6 +115,7 @@ struct HomeView: View {
                 }
             }
             .navigationTitle(navtitle)
+//            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: SIGModel.self) { SIG in
                 // For spotlight and SIGcards
                 // nanti ganti jadi DetailsView

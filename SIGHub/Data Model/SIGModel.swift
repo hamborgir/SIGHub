@@ -9,8 +9,8 @@ import Foundation
 import SwiftData
 
 
-@Model
-class SIGModel: Identifiable {
+struct SIGModel: Identifiable, Hashable {
+
     static var SIGList: [SIGModel] = getData()
     
     var id: UUID
@@ -22,6 +22,8 @@ class SIGModel: Identifiable {
     var category: String
     var image: String
     var whatsapp_link: String
+    
+//    private var events: [EventModel?] = []
     
     init(_ name: String, _ realName: String, _ desc: String, _ session: String, _ category: String, _ image:  String, _ whatsapp_link: String) {
         self.id = UUID()
@@ -53,5 +55,15 @@ class SIGModel: Identifiable {
     
     static func getSample() -> SIGModel {
         return SIGList[0]
+    }
+    
+    // Hashable dump
+    static func == (lhs: SIGModel, rhs: SIGModel) -> Bool {
+        return lhs.name == rhs.name
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(realName)
     }
 }
