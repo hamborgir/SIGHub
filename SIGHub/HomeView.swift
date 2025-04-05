@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    private var navtitle: String = "Discover" //nanti ganti
+    private var navtitle: String = "Home" //nanti ganti (jangan home)
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
