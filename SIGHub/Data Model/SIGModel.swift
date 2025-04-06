@@ -23,7 +23,8 @@ struct SIGModel: Identifiable, Hashable {
     var image: String
     var whatsapp_link: String
     
-//    private var events: [EventModel?] = []
+    private var events: [EventModel?] = []
+    private var videos: [VideoModel?] = []
     
     init(_ name: String, _ realName: String, _ desc: String, _ session: String, _ category: String, _ image:  String, _ whatsapp_link: String) {
         self.id = UUID()
@@ -34,6 +35,8 @@ struct SIGModel: Identifiable, Hashable {
         self.category = category
         self.image = image
         self.whatsapp_link = whatsapp_link
+        self.events = EventModel.eventDict[name] ?? []
+        self.videos = VideoModel.videoDict[name] ?? []
     }
     
     static func getData() -> [SIGModel] {
@@ -57,7 +60,7 @@ struct SIGModel: Identifiable, Hashable {
         return SIGList[0]
     }
     
-    // Hashable dump
+    // MARK: - Hashable dump
     static func == (lhs: SIGModel, rhs: SIGModel) -> Bool {
         return lhs.name == rhs.name
     }

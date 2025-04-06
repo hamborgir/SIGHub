@@ -178,6 +178,7 @@ struct FullScreenVideo: View {
                 .onChange(of: isMuted) { newValue in
                     player.isMuted = newValue
                 }
+                
             
             VStack {
                 HStack {

@@ -14,7 +14,7 @@ struct SIGListView: View {
     
     var body: some View {
         Text("")
-        ScrollView(.vertical) {
+        ScrollView(.vertical, showsIndicators: false) {
             ForEach(SIGList, id:\.self) {SIG in
                 NavigationLink(value: SIG) {
                     VStack {
