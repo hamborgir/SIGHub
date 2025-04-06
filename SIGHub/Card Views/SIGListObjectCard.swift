@@ -36,10 +36,10 @@ struct SIGListObjectView: View {
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
             }
-            .frame(width: 250)
+            .frame(width: 270)
         }
         .padding([.bottom, .top], 10)
-        .frame(width: 350)
+        .frame(width: 400)
         .foregroundColor(.black)
         }
     

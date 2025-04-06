@@ -5,6 +5,8 @@ struct DetailsView: View {
     @State private var hasScrolled = false
     @State private var showVideoOverlay = false
     
+    var SIG: SIGModel
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             ScrollView {
@@ -27,7 +29,7 @@ struct DetailsView: View {
                         .ignoresSafeArea(.all, edges: .top)
                                     
                     ZStack {
-                        SIGDetails()
+                        SIGDetails(SIG: SIG.self)
                             .padding(.top, 80)
                         SIGIcon()
                             .offset(y: -115)
@@ -42,7 +44,7 @@ struct DetailsView: View {
                     }
                                 
                     VStack {
-                        Preview()
+                        Preview(SIG: SIG.self)
                         NextEvent()
                         PastEventView()
                     }
@@ -67,6 +69,10 @@ struct DetailsView: View {
             }
         }
     }
+    
+    init(SIG: SIGModel) {
+       self.SIG = SIG
+   }
 }
 
 // MARK: - Scroll Preference Key
@@ -288,10 +294,13 @@ struct SIGIcon: View {
 
 // MARK: - SIG Details
 struct SIGDetails: View {
+    var SIG: SIGModel
+    
     var body: some View {
         VStack(spacing: 5) {
             Button(action: {}) {
-                Text("OUTDOOR")
+                Text(SIG.category)
+                    .textCase(.uppercase)
                     .font(.caption)
                     .frame(width: 120, height: 40)
                     .background(Color.blue)
@@ -299,11 +308,11 @@ struct SIGDetails: View {
                     .cornerRadius(20)
             }
             Spacer()
-            Text("TrApple")
+            Text(SIG.name)
                 .font(.title)
                 .bold()
             
-            Text("Travelling")
+            Text(SIG.realName)
                 .font(.subheadline)
                 .foregroundColor(.gray)
         }
@@ -342,6 +351,7 @@ struct ArrowLabel: View {
 // MARK: - Preview
 struct Preview: View {
     @State private var isExpanded = false
+    var SIG: SIGModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -358,7 +368,7 @@ struct Preview: View {
                 .foregroundColor(.gray)
             
             HStack(alignment: .bottom) {
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                Text(SIG.desc)
                     .font(.body)
                     .lineLimit(isExpanded ? nil : 3)
                     .animation(.easeInOut, value: isExpanded)
@@ -528,7 +538,7 @@ struct VisualEffectBlur: UIViewRepresentable {
 // MARK: - Content View Preview
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailsView()
+        DetailsView(SIG: SIGModel("Hungers Games", "Archery", "Looking to improve your aim or learn the art of archery? Hungers Games is the SIG for anyone who’s passionate about this exciting sport. Whether you’re a beginner or experienced archer, this group will teach you the skills you need while offering a supportive and fun environment. Draw your bow and join us in the ultimate archery experience!", "Morning and Afternoon", "Physical", "HungerGames", "wa.link/hehe"))
             .previewLayout(.sizeThatFits)
     }
 }

@@ -10,8 +10,8 @@ import SwiftUI
 struct SIGCard: View {
     var SIG: SIGModel
     
-    var width: CGFloat = 200
-    var height: CGFloat = 200
+    var width: CGFloat = 130
+    var height: CGFloat = 130
     
     var body: some View {
         VStack {
@@ -36,9 +36,9 @@ struct SIGCard: View {
                     .font(.caption2)
                     .foregroundColor(.black)
             }
-            .frame(maxWidth:.infinity, alignment: .leading)
+            .frame(maxWidth:.infinity, alignment: .topLeading)
             
-        }.frame(width: self.width, height: self.height)
+        }.frame(width: self.width, height: .infinity)
     }
     
     init() {

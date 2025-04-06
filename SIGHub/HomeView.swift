@@ -94,6 +94,7 @@ struct HomeView: View {
                             SIGCategorizedView(categories: $categories, categorizedSIGList: $categorizedSIGList)
                         }
                     }
+                    .padding(.leading, 15)
                 }
                 
             }
@@ -115,18 +116,10 @@ struct HomeView: View {
                 }
             }
             .navigationTitle(navtitle)
-//            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: SIGModel.self) { SIG in
-                // For spotlight and SIGcards
-                // nanti ganti jadi DetailsView
+//                 For spotlight and SIGcards
                 
-                Image(SIG.image)
-                    .resizable()
-                    .frame(width: 300, height: 200)
-                Text(SIG.name)
-                    .font(.title)
-                    .fontWeight(.bold)
-                Text(SIG.realName)
+                DetailsView(SIG: SIG)
             }
             .navigationDestination(for: String.self) {category in
                 // Categorized SIG List
@@ -143,7 +136,6 @@ struct HomeView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 10)
     }
     
     static func getCategory(_ SIGList: [SIGModel]) -> [String] {
@@ -227,6 +219,7 @@ struct SIGCategorizedView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 5)
             .padding(.bottom, 0)
+            
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
