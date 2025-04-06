@@ -98,7 +98,7 @@ struct HomeView: View {
                 }
                 
             }
-            .searchable(text: $searchText, isPresented: $clickedSearch)
+            .searchable(text: $searchText, isPresented: $clickedSearch, placement: .navigationBarDrawer(displayMode: .always))
             .searchSuggestions{
                 if(!searchText.isEmpty){
                     ForEach(searchedData){ SIG in
@@ -201,32 +201,34 @@ struct SIGCategorizedView: View {
     @Binding var categorizedSIGList: [String: [SIGModel]]
     
     var body: some View {
-        ForEach(categories, id:\.self) { category in
-            Group {
-                NavigationLink(value: category) {
-                    HStack {
-                        Text(category)
-                            .font(.title.bold())
-                            .foregroundColor(.black)
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
-                            .padding(.leading, 0)
+        Group {
+            ForEach(categories, id:\.self) { category in
+                Group {
+                    NavigationLink(value: category) {
+                        HStack {
+                            Text(category)
+                                .font(.title.bold())
+                                .foregroundColor(.black)
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                                .padding(.leading, 0)
+                        }
                     }
+                    
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 20)
+                .padding(.bottom, 0)
                 
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 5)
-            .padding(.bottom, 0)
-            
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    let filteredSIG = categorizedSIGList[category] ?? []
-                    ForEach(filteredSIG, id:\.id) { SIG in
-                        NavigationLink(value: SIG) {
-                            SIGCard(SIG)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        let filteredSIG = categorizedSIGList[category] ?? []
+                        ForEach(filteredSIG, id:\.id) { SIG in
+                            NavigationLink(value: SIG) {
+                                SIGCard(SIG)
+                            }
                         }
                     }
                 }

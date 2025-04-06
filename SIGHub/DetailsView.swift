@@ -1,78 +1,118 @@
-import SwiftUI
 import AVKit
+import SwiftUI
 
 struct DetailsView: View {
     @State private var hasScrolled = false
     @State private var showVideoOverlay = false
-    
+
     var SIG: SIGModel
-    
+
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            ScrollView {
-                GeometryReader { proxy in
-                    Color.clear
-                        .frame(height: 0)
-                        .onAppear {
-                            hasScrolled = proxy.frame(in: .global).minY < -100
-                        }
-                        .onChange(of: proxy.frame(in: .global).minY) { newValue in
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                hasScrolled = newValue < -100
+        NavigationStack {
+            ZStack(alignment: .topLeading) {
+                ScrollView {
+                    GeometryReader { proxy in
+                        Color.clear
+                            .frame(height: 0)
+                            .onAppear {
+                                hasScrolled =
+                                    proxy.frame(in: .global).minY < -100
                             }
+                            .onChange(of: proxy.frame(in: .global).minY) {
+                                newValue in
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    hasScrolled = newValue < -100
+                                }
+                            }
+                            .frame(height: 0)
+                    }
+
+                    VStack(spacing: 0) {
+                        VideoHeader(showVideoOverlay: $showVideoOverlay)
+                            .ignoresSafeArea(.all, edges: .top)
+
+                        ZStack {
+                            SIGDetails(SIG: SIG.self)
+                                .padding(.top, 80)
+                            SIGIcon()
+                                .offset(y: -115)
                         }
-                        .frame(height: 0)
+                        .background(VisualEffectBlur())
+
+                        ZStack {
+                            ArrowLabel(hasScrolled: $hasScrolled)
+                                .padding(.top, 10)
+                                .padding(.bottom, 32)
+                                .background(VisualEffectBlur())
+                        }
+
+                        VStack {
+                            Preview(SIG: SIG.self)
+                            NextEvent()
+                            PastEventView()
+                        }
+                        .background(
+                            GeometryReader { proxy in
+                                Color.clear.preference(
+                                    key: ScrollOffsetKey.self,
+                                    value: proxy.frame(in: .global).minY)
+                            })
+                    }
                 }
-                
-                VStack(spacing: 0) {
-                    VideoHeader(showVideoOverlay: $showVideoOverlay)
-                        .ignoresSafeArea(.all, edges: .top)
-                                    
-                    ZStack {
-                        SIGDetails(SIG: SIG.self)
-                            .padding(.top, 80)
-                        SIGIcon()
-                            .offset(y: -115)
+                .onPreferenceChange(ScrollOffsetKey.self) { value in
+                    withAnimation {
+                        hasScrolled = value < -100
                     }
-                    .background(VisualEffectBlur())
-                                
-                    ZStack {
-                        ArrowLabel(hasScrolled: $hasScrolled)
-                            .padding(.top, 10)
-                            .padding(.bottom, 32)
-                            .background(VisualEffectBlur())
-                    }
-                                
-                    VStack {
-                        Preview(SIG: SIG.self)
-                        NextEvent()
-                        PastEventView()
-                    }
-                    .background(GeometryReader { proxy in
-                        Color.clear.preference(key: ScrollOffsetKey.self, value: proxy.frame(in: .global).minY)
+                }
+
+                NavBar(hasScrolled: $hasScrolled)
+                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
+
+                if showVideoOverlay {
+                    FullScreenVideo(showVideoOverlay: $showVideoOverlay)
+                        .transition(.opacity.combined(with: .scale))
+                        .zIndex(2)
+                }
+            }
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(
+                        action: {
+                            
+                        },
+                        label: {
+                            if !showVideoOverlay {
+                                if hasScrolled {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
+                                        HStack {
+                                            Image(systemName: "chevron.left")
+                                            Text("Back")
+                                        }
+                                    }
+                                } else {
+                                    HStack {
+                                        Image(systemName: "chevron.left")
+                                            .foregroundColor(.white)
+                                    }
+                                    .frame(
+                                        width: 20, height: 20, alignment: .center
+                                    )
+                                    .padding(5)
+                                    .background(Color.black.opacity(0.3))
+                                    .cornerRadius(50)
+                                }
+                            }
                     })
                 }
             }
-            .onPreferenceChange(ScrollOffsetKey.self) { value in
-                withAnimation {
-                    hasScrolled = value < -100
-                }
-            }
-
-            NavBar(hasScrolled: $hasScrolled)
-                .position(x: UIScreen.main.bounds.width / 2, y: 0)
-
-            if showVideoOverlay {
-                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
-                    .transition(.opacity.combined(with: .scale))
-                    .zIndex(2)
-            }
         }
+
     }
-    
+
     init(SIG: SIGModel) {
-       self.SIG = SIG
-   }
+        self.SIG = SIG
+    }
 }
 
 // MARK: - Scroll Preference Key
@@ -86,15 +126,15 @@ struct ScrollOffsetKey: PreferenceKey {
 // MARK: - Navigation Bar
 struct NavBar: View {
     @Binding var hasScrolled: Bool
-    
+
     var body: some View {
         ZStack {
             if hasScrolled {
                 VisualEffectBlur()
                     .opacity(hasScrolled ? 1 : 0)
-                
+
                 HStack(alignment: .center) {
-                    Button(action: { }) {
+                    Button(action: {}) {
                         HStack {
                             Image(systemName: "chevron.backward")
                                 .font(.title2)
@@ -108,19 +148,19 @@ struct NavBar: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 7))
                         }
                     }
-                    
+
                     Spacer()
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, safeAreaTop)
             } else {
                 HStack {
-                    Button(action: { }) {
+                    Button(action: {}) {
                         Image(systemName: "chevron.backward.circle.fill")
                             .font(.title)
                             .foregroundColor(.white.opacity(0.7))
                     }
-                    
+
                     Spacer()
                 }
                 .padding(.horizontal, 16)
@@ -134,22 +174,24 @@ struct NavBar: View {
         )
     }
 }
-    
+
 // MARK: - Safe Area
-private var safeAreaTop: CGFloat {        (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?.safeAreaInsets.top ?? 0
+private var safeAreaTop: CGFloat {
+    (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?
+        .safeAreaInsets.top ?? 0
 }
 
 // MARK: - Video Header Thumbnail
 struct VideoHeader: View {
     @Binding var showVideoOverlay: Bool
-    
+
     var body: some View {
         ZStack {
             Image("tes2")
                 .resizable()
                 .frame(height: UIScreen.main.bounds.width * 4 / 3)
                 .clipped()
-            
+
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showVideoOverlay = true
@@ -169,12 +211,13 @@ struct VideoHeader: View {
 struct FullScreenVideo: View {
     @Binding var showVideoOverlay: Bool
     @State private var isMuted = false
-    let player = AVPlayer(url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
-    
+    let player = AVPlayer(
+        url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
+
     var body: some View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
-            
+
             VideoPlayer(player: player)
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
@@ -184,7 +227,7 @@ struct FullScreenVideo: View {
                 .onChange(of: isMuted) { newValue in
                     player.isMuted = newValue
                 }
-            
+
             VStack {
                 HStack {
                     Button(action: {
@@ -207,16 +250,16 @@ struct FullScreenVideo: View {
                 }
                 .padding(.horizontal)
                 .padding(.top, 50)
-                
+
                 Spacer()
-                
+
                 HStack {
                     Image("tes2")
                         .resizable()
                         .frame(width: 70, height: 70)
                         .background(Color.gray.opacity(0.5))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
-                    
+
                     VStack(alignment: .leading) {
                         Text("TrApple")
                             .font(.title3)
@@ -233,15 +276,22 @@ struct FullScreenVideo: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 80)
-                
+
                 HStack {
                     Spacer()
-                    
+
                     VStack(spacing: 20) {
-                        Button(action: { isMuted.toggle(); player.isMuted = isMuted }) {
-                            Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                                .font(.title2)
-                                .foregroundColor(.white)
+                        Button(action: {
+                            isMuted.toggle()
+                            player.isMuted = isMuted
+                        }) {
+                            Image(
+                                systemName: isMuted
+                                    ? "speaker.slash.fill"
+                                    : "speaker.wave.2.fill"
+                            )
+                            .font(.title2)
+                            .foregroundColor(.white)
                         }
                     }
                     .padding(.trailing, 20)
@@ -295,7 +345,7 @@ struct SIGIcon: View {
 // MARK: - SIG Details
 struct SIGDetails: View {
     var SIG: SIGModel
-    
+
     var body: some View {
         VStack(spacing: 5) {
             Button(action: {}) {
@@ -311,7 +361,7 @@ struct SIGDetails: View {
             Text(SIG.name)
                 .font(.title)
                 .bold()
-            
+
             Text(SIG.realName)
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -326,7 +376,7 @@ struct SIGDetails: View {
 struct ArrowLabel: View {
     @Binding var hasScrolled: Bool
     @State private var isVisible = true
- 
+
     var body: some View {
         VStack {
             if !hasScrolled {
@@ -334,13 +384,18 @@ struct ArrowLabel: View {
                     .font(.title)
                     .foregroundColor(.gray)
                     .opacity(isVisible ? 1 : 0)
-                    .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: isVisible)
+                    .animation(
+                        .easeInOut(duration: 1).repeatForever(
+                            autoreverses: true), value: isVisible)
             }
         }
         .frame(maxWidth: .infinity)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(Animation.easeInOut(duration: 1).repeatForever(autoreverses: true)) {
+                withAnimation(
+                    Animation.easeInOut(duration: 1).repeatForever(
+                        autoreverses: true)
+                ) {
                     isVisible.toggle()
                 }
             }
@@ -352,7 +407,7 @@ struct ArrowLabel: View {
 struct Preview: View {
     @State private var isExpanded = false
     var SIG: SIGModel
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -362,17 +417,17 @@ struct Preview: View {
                 Spacer()
                 Image(systemName: "chevron.right")
             }
-            
+
             Text("What is TrApple?")
                 .font(.subheadline)
                 .foregroundColor(.gray)
-            
+
             HStack(alignment: .bottom) {
                 Text(SIG.desc)
                     .font(.body)
                     .lineLimit(isExpanded ? nil : 3)
                     .animation(.easeInOut, value: isExpanded)
-                
+
                 Button(action: {
                     isExpanded.toggle()
                 }) {
@@ -394,36 +449,40 @@ struct NextEvent: View {
                 .font(.title2)
                 .bold()
                 .padding(.horizontal)
-            
+
             Text("HAPPENING NOW")
                 .font(.caption)
                 .foregroundColor(.blue)
                 .bold()
                 .padding(.horizontal)
-            
+
             ZStack(alignment: .bottomLeading) {
                 Image("tes2")
                     .resizable()
-                    .aspectRatio(16/9, contentMode: .fit)
+                    .aspectRatio(16 / 9, contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                
+
                 VStack(alignment: .leading) {
                     Text("TANGGAL EVENT")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.8))
                         .bold()
-                    
+
                     Text("Nama Event")
                         .font(.headline)
                         .foregroundColor(.white)
                         .bold()
-                    
+
                     Text("Lokasi Event")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.8))
                 }
                 .padding()
-                .background(LinearGradient(gradient: Gradient(colors: [.black.opacity(0.5), .clear]), startPoint: .bottom, endPoint: .top))
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            .black.opacity(0.5), .clear,
+                        ]), startPoint: .bottom, endPoint: .top))
             }
             .padding(.horizontal)
         }
@@ -433,20 +492,26 @@ struct NextEvent: View {
 // MARK: - Past Event
 struct PastEventView: View {
     let events: [PastEvent] = [
-        PastEvent(image: "tes", title: "Mount Bromo, Malang", description: "Deskripsi", tag: "Outdoor"),
-        PastEvent(image: "tes", title: "Mount Bromo, Malang", description: "Deskripsi", tag: "Outdoor"),
-        PastEvent(image: "tes", title: "Mount Bromo, Malang", description: "Deskripsi", tag: "Outdoor")
+        PastEvent(
+            image: "tes", title: "Mount Bromo, Malang",
+            description: "Deskripsi", tag: "Outdoor"),
+        PastEvent(
+            image: "tes", title: "Mount Bromo, Malang",
+            description: "Deskripsi", tag: "Outdoor"),
+        PastEvent(
+            image: "tes", title: "Mount Bromo, Malang",
+            description: "Deskripsi", tag: "Outdoor"),
     ]
-    
+
     @State private var currentIndex = 0
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Past Events")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-            
+
             VStack {
                 TabView(selection: $currentIndex) {
                     ForEach(events.indices, id: \.self) { index in
@@ -457,14 +522,16 @@ struct PastEventView: View {
                 }
                 .frame(height: 110)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                
+
                 Spacer().frame(height: 16)
-                
+
                 HStack {
                     ForEach(events.indices, id: \.self) { index in
                         Circle()
                             .frame(width: 8, height: 8)
-                            .foregroundColor(currentIndex == index ? .blue : .gray.opacity(0.5))
+                            .foregroundColor(
+                                currentIndex == index
+                                    ? .blue : .gray.opacity(0.5))
                     }
                 }
             }
@@ -475,7 +542,7 @@ struct PastEventView: View {
 
 struct PastEventCard: View {
     let event: PastEvent
-    
+
     var body: some View {
         HStack(spacing: 10) {
             Image(event.image)
@@ -487,17 +554,17 @@ struct PastEventCard: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                 )
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(event.title)
                     .font(.headline)
-                
+
                 Text(event.description)
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                
+
                 Spacer()
-                
+
                 Button(action: {}) {
                     Text(event.tag)
                         .fontWeight(.bold)
@@ -538,7 +605,13 @@ struct VisualEffectBlur: UIViewRepresentable {
 // MARK: - Content View Preview
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailsView(SIG: SIGModel("Hungers Games", "Archery", "Looking to improve your aim or learn the art of archery? Hungers Games is the SIG for anyone who’s passionate about this exciting sport. Whether you’re a beginner or experienced archer, this group will teach you the skills you need while offering a supportive and fun environment. Draw your bow and join us in the ultimate archery experience!", "Morning and Afternoon", "Physical", "HungerGames", "wa.link/hehe"))
-            .previewLayout(.sizeThatFits)
+        DetailsView(
+            SIG: SIGModel(
+                "Hungers Games", "Archery",
+                "Looking to improve your aim or learn the art of archery? Hungers Games is the SIG for anyone who’s passionate about this exciting sport. Whether you’re a beginner or experienced archer, this group will teach you the skills you need while offering a supportive and fun environment. Draw your bow and join us in the ultimate archery experience!",
+                "Morning and Afternoon", "Physical", "HungerGames",
+                "wa.link/hehe")
+        )
+        .previewLayout(.sizeThatFits)
     }
 }
