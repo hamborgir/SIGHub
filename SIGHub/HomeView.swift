@@ -94,10 +94,11 @@ struct HomeView: View {
                             SIGCategorizedView(categories: $categories, categorizedSIGList: $categorizedSIGList)
                         }
                     }
+                    .padding(.leading, 15)
                 }
                 
             }
-            .searchable(text: $searchText, isPresented: $clickedSearch)
+            .searchable(text: $searchText, isPresented: $clickedSearch, placement: .navigationBarDrawer(displayMode: .always))
             .searchSuggestions{
                 if(!searchText.isEmpty){
                     ForEach(searchedData){ SIG in
@@ -115,18 +116,10 @@ struct HomeView: View {
                 }
             }
             .navigationTitle(navtitle)
-//            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: SIGModel.self) { SIG in
-                // For spotlight and SIGcards
-                // nanti ganti jadi DetailsView
+//                 For spotlight and SIGcards
                 
-                Image(SIG.image)
-                    .resizable()
-                    .frame(width: 300, height: 200)
-                Text(SIG.name)
-                    .font(.title)
-                    .fontWeight(.bold)
-                Text(SIG.realName)
+                DetailsView(SIG: SIG)
             }
             .navigationDestination(for: String.self) {category in
                 // Categorized SIG List
@@ -143,7 +136,6 @@ struct HomeView: View {
             
             Spacer()
         }
-        .padding(.horizontal, 10)
     }
     
     static func getCategory(_ SIGList: [SIGModel]) -> [String] {
@@ -209,31 +201,34 @@ struct SIGCategorizedView: View {
     @Binding var categorizedSIGList: [String: [SIGModel]]
     
     var body: some View {
-        ForEach(categories, id:\.self) { category in
-            Group {
-                NavigationLink(value: category) {
-                    HStack {
-                        Text(category)
-                            .font(.title.bold())
-                            .foregroundColor(.black)
-                        
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.gray)
-                            .padding(.leading, 0)
+        Group {
+            ForEach(categories, id:\.self) { category in
+                Group {
+                    NavigationLink(value: category) {
+                        HStack {
+                            Text(category)
+                                .font(.title.bold())
+                                .foregroundColor(.black)
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                                .padding(.leading, 0)
+                        }
                     }
+                    
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 20)
+                .padding(.bottom, 0)
                 
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 5)
-            .padding(.bottom, 0)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    let filteredSIG = categorizedSIGList[category] ?? []
-                    ForEach(filteredSIG, id:\.id) { SIG in
-                        NavigationLink(value: SIG) {
-                            SIGCard(SIG)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        let filteredSIG = categorizedSIGList[category] ?? []
+                        ForEach(filteredSIG, id:\.id) { SIG in
+                            NavigationLink(value: SIG) {
+                                SIGCard(SIG)
+                            }
                         }
                     }
                 }
