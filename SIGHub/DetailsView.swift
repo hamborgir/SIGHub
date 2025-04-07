@@ -37,7 +37,7 @@ struct DetailsView: View {
                         ZStack {
                             SIGDetails(SIG: SIG.self)
                                 .padding(.top, 80)
-                            SIGIcon()
+                            SIGIcon(imageName: SIG.pp)
                                 .offset(y: -115)
                         }
                         .background(VisualEffectBlur())
@@ -222,6 +222,8 @@ struct VideoHeader: View {
 struct FullScreenVideo: View {
     @Binding var showVideoOverlay: Bool
     @State private var isMuted = false
+    @State var url = Bundle.main.url(forResource: "Create Animated Videos in After Effects", withExtension: "mp4")!
+    
     let player = AVPlayer(
         url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
 
@@ -229,7 +231,7 @@ struct FullScreenVideo: View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
 
-            VideoPlayer(player: player)
+            VideoPlayer(player: AVPlayer(url: url))
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
                     player.play()
@@ -344,8 +346,9 @@ struct VideoProgressBar: View {
 
 // MARK: - SIG Icon
 struct SIGIcon: View {
+    var imageName: String
     var body: some View {
-        Image("tes")
+        Image(imageName)
             .resizable()
             .frame(width: 150, height: 150)
             .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -615,11 +618,14 @@ struct VisualEffectBlur: UIViewRepresentable {
 
 // MARK: - Content View Preview
 //struct ContentView_Previews: PreviewProvider {
+//    @State var path = NavigationPath()
 //    static var previews: some View {
-//        DetailsView(
-//            SIG: SIGModel.getSample(),
-//            path: NavigationPath()
-//        )
-//        .previewLayout(.sizeThatFits)
+//        NavigationStack(path: $path) {
+//            DetailsView(
+//                SIG: SIGModel.getSample(),
+//                path: $path
+//            )
+//            .previewLayout(.sizeThatFits)
+//        }
 //    }
 //}
