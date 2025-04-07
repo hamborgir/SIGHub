@@ -19,7 +19,8 @@ struct EventModel: Identifiable, Hashable {
     var price: Double
     var SIGName: String
     var date: Date
-    var Image: String
+    var image: String
+    var location: String
     
     var SIG: SIGModel? {
         for SIG in SIGModel.SIGList where SIG.name == SIGName {
@@ -37,24 +38,29 @@ struct EventModel: Identifiable, Hashable {
     }
     
     
-    init(name: String, description: String, price: Double, SIGName: String, date: String, Image: String) {
+    init(name: String, description: String, price: Double, SIGName: String, date: String, image: String, location: String) {
         self.name = name
         self.description = description
         self.price = price
         self.SIGName = SIGName
-        self.Image = Image
-        self.date = MyDateFormatter.fromString(date) ?? Date()
+        self.image = image
+        self.date = MyDateFormatter.fromString(date)!
+        self.location = location
     }
     
     static func populateEventList() -> [EventModel] {
         
         let eventList: [EventModel] = [
-            .init(name: "Mabar MLBB", description: "Push rank together 'til we reach mythic! :)", price: 0, SIGName: "GMA", date: "20/3/25 20:00", Image: "🏆"),
-            .init(name: "Archery Practice", description: "Push rank together 'til we reach mythic! :)", price: 100_000, SIGName: "Hungers Games", date: "22/03/2025 09:00", Image: "🏹"),
-            .init(name: "Archery Practice", description: "Push rank together 'til we reach mythic! :)", price: 100_000, SIGName: "Hungers Games", date: "10/04/2025 09:00", Image: "🏹")
+            .init(name: "Mabar MLBB", description: "Push rank together 'til we reach mythic! :)", price: 0, SIGName: "GMA", date: "20/3/25 20:00", image: "🏆", location: "Online"),
+            .init(name: "Archery Practice", description: "Practice together, improve your skills! This will be our first sesion.", price: 100_000, SIGName: "Hungers Games", date: "22/03/2025 09:00", image: "🏹", location: "BSD"),
+            .init(name: "Archery Practice", description: "Practice together, improve your skills! This will be our second sesion.", price: 100_000, SIGName: "Hungers Games", date: "10/04/2025 09:00", image: "🏹", location: "BSD")
         ]
         
         
         return eventList.sorted { $0.date < $1.date }
+    }
+    
+    static func getSample() -> EventModel {
+        return eventList.first!
     }
 }

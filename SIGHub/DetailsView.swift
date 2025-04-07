@@ -51,8 +51,8 @@ struct DetailsView: View {
 
                         VStack {
                             Preview(SIG: SIG.self)
-                            NextEvent()
-                            PastEventView()
+                            NextEvent(SIG: SIG)
+                            PastEventView(SIG: SIG)
                         }
                         .background(
                             GeometryReader { proxy in
@@ -457,6 +457,24 @@ struct Preview: View {
 
 // MARK: - Next Event
 struct NextEvent: View {
+    var SIG: SIGModel
+    
+    var nearestEvents: [EventModel]? {
+        let currentDate = Date()
+        
+        if let events = SIG.events {
+            var nearestEvents : [EventModel] = []
+            for event in events {
+                if event.date > currentDate {
+                    nearestEvents.append(event)
+                }
+            }
+            return nearestEvents
+        }
+        
+        return nil
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Next Event")
@@ -464,61 +482,57 @@ struct NextEvent: View {
                 .bold()
                 .padding(.horizontal)
 
-            Text("HAPPENING NOW")
-                .font(.caption)
-                .foregroundColor(.blue)
-                .bold()
-                .padding(.horizontal)
-
-            ZStack(alignment: .bottomLeading) {
-                Image("tes2")
-                    .resizable()
-                    .aspectRatio(16 / 9, contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-
-                VStack(alignment: .leading) {
-                    Text("TANGGAL EVENT")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.8))
-                        .bold()
-
-                    Text("Nama Event")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .bold()
-
-                    Text("Lokasi Event")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.8))
+            if let events = nearestEvents {
+                // FIXME: Change the UX Writing for this
+                Text("HAPPENING NOW")
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                    .bold()
+                    .padding(.horizontal)
+                
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(events, id: \.id) { event in
+                            NextEventCard(event: event)
+                        }
+                    }
                 }
-                .padding()
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            .black.opacity(0.5), .clear,
-                        ]), startPoint: .bottom, endPoint: .top))
+            } else {
+                GroupBox(label: Text("No Event To Show")) {
+                    Text("You're up to date! :)")
+                }
             }
-            .padding(.horizontal)
+            
+
         }
     }
 }
 
+
 // MARK: - Past Event
 struct PastEventView: View {
-    let events: [PastEvent] = [
-        PastEvent(
-            image: "tes", title: "Mount Bromo, Malang",
-            description: "Deskripsi", tag: "Outdoor"),
-        PastEvent(
-            image: "tes", title: "Mount Bromo, Malang",
-            description: "Deskripsi", tag: "Outdoor"),
-        PastEvent(
-            image: "tes", title: "Mount Bromo, Malang",
-            description: "Deskripsi", tag: "Outdoor"),
-    ]
+    private var SIG: SIGModel
+    
+    var pastEvents: [EventModel]? {
+        let currentDate = Date()
+        
+        if let events = SIG.events {
+            var pastEvents : [EventModel] = []
+            for event in events {
+                if event.date <= currentDate {
+                    pastEvents.append(event)
+                }
+            }
+            return pastEvents
+        }
+        
+        return nil
+    }
 
     @State private var currentIndex = 0
 
+    
+    // FIXME: Correct the size of tabview container
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Past Events")
@@ -526,75 +540,42 @@ struct PastEventView: View {
                 .fontWeight(.bold)
                 .padding(.horizontal)
 
-            VStack {
-                TabView(selection: $currentIndex) {
-                    ForEach(events.indices, id: \.self) { index in
-                        PastEventCard(event: events[index])
-                            .tag(index)
-                            .padding(.horizontal, 20)
+            if let events = pastEvents {
+                VStack {
+                    TabView(selection: $currentIndex) {
+                        ForEach(events.indices, id: \.self) { index in
+                            PastEventCard(event: events[index])
+                                .tag(index)
+                                .padding(.horizontal, 20)
+                        }
+                    }
+                    .frame(height: 110)
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    
+                    Spacer().frame(height: 16)
+                    
+                    HStack {
+                        ForEach(events.indices, id: \.self) { index in
+                            Circle()
+                                .frame(width: 8, height: 8)
+                                .foregroundColor(
+                                    currentIndex == index
+                                    ? .blue : .gray.opacity(0.5))
+                        }
                     }
                 }
-                .frame(height: 110)
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-
-                Spacer().frame(height: 16)
-
-                HStack {
-                    ForEach(events.indices, id: \.self) { index in
-                        Circle()
-                            .frame(width: 8, height: 8)
-                            .foregroundColor(
-                                currentIndex == index
-                                    ? .blue : .gray.opacity(0.5))
-                    }
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+            } else {
+                GroupBox(label: Text("No Event To Show")) {
+                    Text("You're up to date! :)")
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
-}
-
-struct PastEventCard: View {
-    let event: PastEvent
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(event.image)
-                .resizable()
-                .frame(width: 80, height: 80)
-                .cornerRadius(10)
-                .shadow(radius: 5)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                )
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text(event.title)
-                    .font(.headline)
-
-                Text(event.description)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-
-                Spacer()
-
-                Button(action: {}) {
-                    Text(event.tag)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 15)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(15)
-                }
-            }
-            Spacer()
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(15)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+    
+    init(SIG: SIGModel) {
+        self.SIG = SIG
     }
 }
 
@@ -622,4 +603,3 @@ struct VisualEffectBlur: UIViewRepresentable {
     
     DetailsView(SIG: SIGModel.getSample(), path: $path)
 }
-
