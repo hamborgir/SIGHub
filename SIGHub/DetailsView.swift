@@ -6,9 +6,10 @@ struct DetailsView: View {
     @State private var showVideoOverlay = false
 
     var SIG: SIGModel
+    var previousPage: String
 
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             ZStack(alignment: .topLeading) {
                 ScrollView {
                     GeometryReader { proxy in
@@ -87,7 +88,7 @@ struct DetailsView: View {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         HStack {
                                             Image(systemName: "chevron.left")
-                                            Text("Back")
+                                            Text(previousPage)
                                         }
                                     }
                                 } else {
@@ -106,12 +107,13 @@ struct DetailsView: View {
                     })
                 }
             }
-        }
+//        }
 
     }
 
-    init(SIG: SIGModel) {
+    init(SIG: SIGModel, previousPage: String) {
         self.SIG = SIG
+        self.previousPage = previousPage
     }
 }
 
@@ -610,7 +612,7 @@ struct ContentView_Previews: PreviewProvider {
                 "Hungers Games", "Archery",
                 "Looking to improve your aim or learn the art of archery? Hungers Games is the SIG for anyone who’s passionate about this exciting sport. Whether you’re a beginner or experienced archer, this group will teach you the skills you need while offering a supportive and fun environment. Draw your bow and join us in the ultimate archery experience!",
                 "Morning and Afternoon", "Physical", "HungerGames",
-                "wa.link/hehe")
+                "wa.link/hehe"), previousPage : "test"
         )
         .previewLayout(.sizeThatFits)
     }

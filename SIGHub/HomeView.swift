@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    private var navtitle: String = "Home" //nanti ganti (jangan home)
+    @State var navtitle: String = "Home" //nanti ganti (jangan home)
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
@@ -52,7 +52,6 @@ struct HomeView: View {
                 
                 if (enterSearch) {
 //                        Search Page
-                    
                     Picker("Filter", selection: $choosenFilter){
                         ForEach (sessionFilter, id: \.self){
                             Text($0)
@@ -109,17 +108,19 @@ struct HomeView: View {
             }
             .onSubmit (of: .search) {
                 enterSearch = true
+                navtitle = "Search"
             }
             .onChange(of: searchText) {
                 if searchText.isEmpty {
                     enterSearch = false
+                    navtitle = "Home"
                 }
             }
             .navigationTitle(navtitle)
             .navigationDestination(for: SIGModel.self) { SIG in
 //                 For spotlight and SIGcards
                 
-                DetailsView(SIG: SIG)
+                DetailsView(SIG: SIG, previousPage: navtitle)
             }
             .navigationDestination(for: String.self) {category in
                 // Categorized SIG List
@@ -131,7 +132,7 @@ struct HomeView: View {
                                 .bold()
                         }
                     }
-                
+                    .navigationBarTitleDisplayMode(.inline)
             }
             
             Spacer()
