@@ -200,7 +200,7 @@ struct VideoHeader: View {
         ZStack {
             Image("tes2")
                 .resizable()
-                .frame(height: UIScreen.main.bounds.width * 4 / 3)
+                .frame(height: UIScreen.main.bounds.width * 6 / 5)
                 .clipped()
 
             Button(action: {
@@ -221,124 +221,121 @@ struct VideoHeader: View {
 // MARK: - Full Screen Video Overlay
 struct FullScreenVideo: View {
     @Binding var showVideoOverlay: Bool
+    @State private var player = AVPlayer(url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
+    @State private var isPlaying = false
     @State private var isMuted = false
-    let player = AVPlayer(
-        url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
-
+    @State private var currentTime: Double = 0
+    @State private var duration: Double = 1
+    
     var body: some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-
-            VideoPlayer(player: player)
-                .edgesIgnoringSafeArea(.all)
+            PlayerUIView(player: player)
+                .ignoresSafeArea()
                 .onAppear {
                     player.play()
-                    player.isMuted = isMuted
+                    isPlaying = true
+                    player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
+                        currentTime = time.seconds
+                        duration = player.currentItem?.duration.seconds ?? 1
+                    }
                 }
-                .onChange(of: isMuted) { newValue in
-                    player.isMuted = newValue
-                }
-
+            
             VStack {
                 HStack {
                     Button(action: {
-                        withAnimation {
-                            player.pause()
-                            player.seek(to: .zero)
-                            showVideoOverlay = false
-                        }
                     }) {
                         Image(systemName: "xmark")
-                            .font(.title2)
                             .foregroundColor(.white)
+                            .padding()
                     }
+                    
                     Spacer()
-                    Text("TrApple")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Spacer()
-                    Spacer()
+                    
+                    Button(action: {
+                        isMuted.toggle()
+                        player.isMuted = isMuted
+                    }) {
+                        Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .foregroundColor(.white)
+                            .padding(.trailing, 10)
+                    }
                 }
-                .padding(.horizontal)
-                .padding(.top, 50)
-
                 Spacer()
-
-                HStack {
-                    Image("tes2")
-                        .resizable()
-                        .frame(width: 70, height: 70)
-                        .background(Color.gray.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                    VStack(alignment: .leading) {
-                        Text("TrApple")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                        Text("Travelling")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        Text("What should you prepare for traveling? 👀✨")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    Spacer()
+            }
+            
+            HStack(spacing: 50) {
+                Button {
+                    seek(by: -10)
+                } label: {
+                    rewindForwardIcon(systemName: "gobackward.10")
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 80)
-
-                HStack {
-                    Spacer()
-
-                    VStack(spacing: 20) {
-                        Button(action: {
-                            isMuted.toggle()
-                            player.isMuted = isMuted
-                        }) {
-                            Image(
-                                systemName: isMuted
-                                    ? "speaker.slash.fill"
-                                    : "speaker.wave.2.fill"
-                            )
-                            .font(.title2)
-                            .foregroundColor(.white)
-                        }
-                    }
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 80)
+                
+                Button {
+                    togglePlay()
+                } label: {
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                        .font(.system(size: 45))
+                        .foregroundColor(.white)
+                        .shadow(radius: 10)
+                }
+                
+                Button {
+                    seek(by: 10)
+                } label: {
+                    rewindForwardIcon(systemName: "goforward.10")
                 }
             }
+            
             VStack {
                 Spacer()
-                Rectangle()
-                    .frame(height: 4)
+                VStack {
+                    Slider(value: $currentTime, in: 0...duration, onEditingChanged: { editing in
+                        if !editing {
+                            player.seek(to: CMTime(seconds: currentTime, preferredTimescale: 600))
+                        }
+                    })
+                    
+                    HStack {
+                        Text(formatTime(currentTime))
+                        Spacer()
+                        Text("-\(formatTime(duration - currentTime))")
+                    }
+                    .font(.caption)
                     .foregroundColor(.white.opacity(0.8))
-                    .padding(.horizontal)
+                    .padding(.horizontal, 10)
+                }
+                .padding(.bottom, 20)
+                .padding(.horizontal, 10)
             }
         }
+        .background(Color.black)
     }
-}
-
-// MARK: - Video Progress Bar
-struct VideoProgressBar: View {
-    @Binding var progress: CGFloat
-
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                Rectangle()
-                    .frame(width: geometry.size.width, height: 4)
-                    .opacity(0.3)
-                    .foregroundColor(.white)
-
-                Rectangle()
-                    .frame(width: geometry.size.width * progress, height: 4)
-                    .foregroundColor(.white)
-            }
+    
+    func togglePlay() {
+        if isPlaying {
+            player.pause()
+        } else {
+            player.play()
         }
-        .frame(height: 4)
-        .padding(.horizontal, 16)
+        isPlaying.toggle()
+    }
+    
+    func seek(by seconds: Double) {
+        let newTime = currentTime + seconds
+        player.seek(to: CMTime(seconds: max(0, min(duration, newTime)), preferredTimescale: 600))
+    }
+    
+    func rewindForwardIcon(systemName: String) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 28))
+            .foregroundColor(.white)
+            .shadow(radius: 5)
+    }
+    
+    func formatTime(_ time: Double) -> String {
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        return String(format: "%d:%02d", minutes, seconds)
     }
 }
 
@@ -422,11 +419,9 @@ struct Preview: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
-                Text("Preview")
+                Text("Description")
                     .font(.title2)
                     .bold()
-                Spacer()
-                Image(systemName: "chevron.right")
             }
 
             Text("What is TrApple?")
@@ -620,6 +615,5 @@ struct VisualEffectBlur: UIViewRepresentable {
 //            SIG: SIGModel.getSample(),
 //            path: NavigationPath()
 //        )
-//        .previewLayout(.sizeThatFits)
 //    }
 //}
