@@ -119,7 +119,7 @@ struct HomeView: View {
             .navigationDestination(for: SIGModel.self) { SIG in
 //                 For spotlight and SIGcards
                 
-                DetailsView(SIG: SIG)
+                DetailsView(SIG: SIG, path: $path)
             }
             .navigationDestination(for: String.self) {category in
                 // Categorized SIG List

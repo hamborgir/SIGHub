@@ -4,11 +4,14 @@ import SwiftUI
 struct DetailsView: View {
     @State private var hasScrolled = false
     @State private var showVideoOverlay = false
+    
+    @Binding private var path: NavigationPath
 
-    var SIG: SIGModel
+    private var SIG: SIGModel
+    private var navtitle: String = "back"
 
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
             ZStack(alignment: .topLeading) {
                 ScrollView {
                     GeometryReader { proxy in
@@ -65,8 +68,8 @@ struct DetailsView: View {
                     }
                 }
 
-                NavBar(hasScrolled: $hasScrolled)
-                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
+//                NavBar(hasScrolled: $hasScrolled)
+//                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
 
                 if showVideoOverlay {
                     FullScreenVideo(showVideoOverlay: $showVideoOverlay)
@@ -74,12 +77,13 @@ struct DetailsView: View {
                         .zIndex(2)
                 }
             }
+//            .toolbarVisibility(.hidden)
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: {
-                            
+                            path.removeLast()
                         },
                         label: {
                             if !showVideoOverlay {
@@ -87,7 +91,7 @@ struct DetailsView: View {
                                     withAnimation(.easeInOut(duration: 0.3)) {
                                         HStack {
                                             Image(systemName: "chevron.left")
-                                            Text("Back")
+                                            Text(navtitle)
                                         }
                                     }
                                 } else {
@@ -106,12 +110,19 @@ struct DetailsView: View {
                     })
                 }
             }
-        }
+//        }
 
     }
 
-    init(SIG: SIGModel) {
+    init(SIG: SIGModel, path: Binding<NavigationPath>) {
         self.SIG = SIG
+        self._path = path
+    }
+    
+    init(SIG: SIGModel, path: Binding<NavigationPath>, navtitle: String) {
+        self.SIG = SIG
+        self._path = path
+        self.navtitle = navtitle
     }
 }
 
@@ -603,15 +614,12 @@ struct VisualEffectBlur: UIViewRepresentable {
 }
 
 // MARK: - Content View Preview
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailsView(
-            SIG: SIGModel(
-                "Hungers Games", "Archery",
-                "Looking to improve your aim or learn the art of archery? Hungers Games is the SIG for anyone who’s passionate about this exciting sport. Whether you’re a beginner or experienced archer, this group will teach you the skills you need while offering a supportive and fun environment. Draw your bow and join us in the ultimate archery experience!",
-                "Morning and Afternoon", "Physical", "HungerGames",
-                "wa.link/hehe")
-        )
-        .previewLayout(.sizeThatFits)
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DetailsView(
+//            SIG: SIGModel.getSample(),
+//            path: NavigationPath()
+//        )
+//        .previewLayout(.sizeThatFits)
+//    }
+//}
