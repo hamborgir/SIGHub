@@ -86,7 +86,23 @@ struct HomeView: View {
                 else {
                     // Home Page Structure
                     ScrollView(.vertical, showsIndicators: false) {
-                        VStack {
+                        VStack (alignment: .leading){
+                            
+                            VStack (alignment: .leading){
+                                HStack {
+                                    Image(systemName: "hand.wave.fill")
+                                        .foregroundColor(.yellow)
+                                        .font(.system(size: 25))
+                                    Text("Hi,")
+                                        .font(.title)
+                                        .fontWeight(.bold)
+                                }
+                                .padding(.top, 10)
+                                
+                                Text("Explore more about SIG in ADA")
+                                    .font(.title3)
+                                    
+                            }
                             
                             // Spotlight Event
                             SpotlightView()
@@ -97,7 +113,7 @@ struct HomeView: View {
                             SIGCategorizedView(categories: $categories, categorizedSIGList: $categorizedSIGList)
                         }
                     }
-                    .padding(.horizontal, 15)
+                    .padding(.leading, 20)
                 }
                 
             }
@@ -120,7 +136,8 @@ struct HomeView: View {
                     navtitle = "Home"
                 }
             }
-            .navigationTitle(navtitle)
+//            .navigationTitle(navtitle)
+//            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: SIGModel.self) { SIG in
                 //                 For spotlight and SIGcards
                 
