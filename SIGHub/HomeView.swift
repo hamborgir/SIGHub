@@ -10,13 +10,11 @@ import SwiftData
 
 struct HomeView: View {
     @State var navtitle: String = "Home" //nanti ganti (jangan home)
+    @State private var path = NavigationPath()
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
     @State private var categorizedSIGList: [String: [SIGModel]] = Dictionary(grouping: SIGModel.getData()) { $0.category }
-    @State private var path = NavigationPath()
-    
-    @Environment(\.modelContext) private var context
     
     //    @Query() var SIGList: [SIGModel]
     
@@ -28,6 +26,10 @@ struct HomeView: View {
     @State private var searchText: String = ""
     @State private var clickedSearch = false
     @State private var enterSearch = false
+    
+    let backgroundGradient = LinearGradient(
+        colors: [Color.red, Color.blue],
+        startPoint: .top, endPoint: .bottom)
     
     // computed properties
     var filteredSearchedData: [SIGModel] {
@@ -46,12 +48,14 @@ struct HomeView: View {
     
     
     
+    // MARK: - Body
     var body: some View {
         NavigationStack(path: $path) {
+            // TODO: Implement color gradient
             VStack {
                 
                 if (enterSearch) {
-//                        Search Page
+                    //                        Search Page
                     Picker("Filter", selection: $choosenFilter){
                         ForEach (sessionFilter, id: \.self){
                             Text($0)
@@ -62,7 +66,7 @@ struct HomeView: View {
                     
                     if filteredSearchedData.isEmpty {
                         noResultView()
-                            
+                        
                     } else {
                         ScrollView {
                             ForEach(filteredSearchedData){ SIG in
@@ -85,7 +89,7 @@ struct HomeView: View {
                         VStack {
                             
                             // Spotlight Event
-                            SpotlightView(SIGList: $SIGList)
+                            SpotlightView()
                                 .padding(.vertical, 5)
                             
                             
@@ -93,7 +97,7 @@ struct HomeView: View {
                             SIGCategorizedView(categories: $categories, categorizedSIGList: $categorizedSIGList)
                         }
                     }
-                    .padding(.leading, 15)
+                    .padding(.horizontal, 15)
                 }
                 
             }
@@ -118,7 +122,7 @@ struct HomeView: View {
             }
             .navigationTitle(navtitle)
             .navigationDestination(for: SIGModel.self) { SIG in
-//                 For spotlight and SIGcards
+                //                 For spotlight and SIGcards
                 
                 DetailsView(SIG: SIG, path: $path, navtitle: navtitle)
             }
@@ -153,25 +157,58 @@ struct HomeView: View {
     HomeView()
 }
 
-//View untuk home
+//MARK: - Spotlight View
 struct SpotlightView: View {
-    @Binding var SIGList: [SIGModel]
+    private var eventList: [EventModel] = EventModel.eventList
+    private var isNearestEventAvailable: Bool { !nearestEventList.isEmpty }
+    
+    private var nearestEventList: [EventModel] {
+        let N : Int = 7 // days to consider
+        
+        var eventWithinNDays: [EventModel] = []
+        
+        let calendar: Calendar = Calendar(identifier: .gregorian)
+        let lowerDate: Date = Date()
+        let upperDate: Date = calendar.date(byAdding: .day, value: N, to: lowerDate)!
+        
+        eventList.forEach { event in
+            if event.date >= lowerDate && event.date <= upperDate {
+                eventWithinNDays.append(event)
+            }
+        }
+        
+        return eventWithinNDays
+    }
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(SIGList) { SIG in
-                    NavigationLink(value: SIG) {
-                        SpotlightCard(SIG)
+        VStack {
+            if isNearestEventAvailable {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(nearestEventList) { event in
+                            NavigationLink(value: event.SIG!) {
+                                SpotlightCard(event.SIG!)
+                                    .containerRelativeFrame(.horizontal, count: 1, spacing: 100)
+                            }
+                        }
                     }
+                }
+                //        .safeAreaPadding(.horizontal, 30)
+                .contentMargins(.horizontal, 28, for: .scrollContent)
+                .scrollTargetBehavior(.paging)
+            } else {
+                GroupBox(label: Text("No Event To Show")) {
+                    Text("You're up to date! :)")
+                        .frame(height: 400)
                 }
             }
         }
-
+        
+        
     }
 }
 
-//View untuk search
+//MARK: - No Result View
 struct noResultView: View {
     
     var body: some View {
@@ -197,6 +234,7 @@ struct suggestionView: View {
     }
 }
 
+// MARK: - Categorized SIG View
 struct SIGCategorizedView: View {
     @Binding var categories: [String]
     @Binding var categorizedSIGList: [String: [SIGModel]]
@@ -222,7 +260,7 @@ struct SIGCategorizedView: View {
                 .padding(.top, 20)
                 .padding(.bottom, 0)
                 
-
+                // TODO: Implement .viewAligned
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         let filteredSIG = categorizedSIGList[category] ?? []

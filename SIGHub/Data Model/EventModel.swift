@@ -10,47 +10,51 @@ import Foundation
 struct EventModel: Identifiable, Hashable {
     
     static var eventList: [EventModel] = populateEventList()
-    static var eventDict: [String: [EventModel]] = Dictionary(grouping: eventList, by: { $0.SIG })
+    static var eventDict: [String: [EventModel]] = Dictionary(grouping: eventList, by: { $0.SIGName })
     
     var id: UUID = UUID()
     
     var name: String
     var description: String
     var price: Double
-    var SIG: String
+    var SIGName: String
     var date: Date
     var Image: String
     
+    var SIG: SIGModel? {
+        for SIG in SIGModel.SIGList where SIG.name == SIGName {
+            return SIG
+        }
+        return nil
+    }
+    
     var formattedDate: String {
-        EventModel.df.string(from: date)
+        MyDateFormatter.fromDate(self.date) ?? "Invalid Date"
     }
     
     var weekday: String {
         date.formatted(.dateTime.weekday(.abbreviated))
     }
     
-    private static var df: DateFormatter =  {
-        let df = DateFormatter()
-        df.dateFormat = "dd/MM/yy HH:mm"
-        return df
-    }()
     
-    init(name: String, description: String, price: Double, SIG: String, date: String, Image: String) {
+    init(name: String, description: String, price: Double, SIGName: String, date: String, Image: String) {
         self.name = name
         self.description = description
         self.price = price
-        self.SIG = SIG
+        self.SIGName = SIGName
         self.Image = Image
-        self.date = EventModel.df.date(from: date) ?? Date()
+        self.date = MyDateFormatter.fromString(date) ?? Date()
     }
     
     static func populateEventList() -> [EventModel] {
         
         let eventList: [EventModel] = [
-            .init(name: "Mabar MLBB", description: "Push rank together 'til we reach mythic! :)", price: 0, SIG: "GMA", date: "20/3/25 20:00", Image: "🏆"),
-            .init(name: "Archery Practice", description: "Push rank together 'til we reach mythic! :)", price: 100_000, SIG: "Hungers Games", date: "22/03/2025 09:00", Image: "🏹")
+            .init(name: "Mabar MLBB", description: "Push rank together 'til we reach mythic! :)", price: 0, SIGName: "GMA", date: "20/3/25 20:00", Image: "🏆"),
+            .init(name: "Archery Practice", description: "Push rank together 'til we reach mythic! :)", price: 100_000, SIGName: "Hungers Games", date: "22/03/2025 09:00", Image: "🏹"),
+            .init(name: "Archery Practice", description: "Push rank together 'til we reach mythic! :)", price: 100_000, SIGName: "Hungers Games", date: "10/04/2025 09:00", Image: "🏹")
         ]
         
-        return eventList
+        
+        return eventList.sorted { $0.date < $1.date }
     }
 }

@@ -12,6 +12,7 @@ import SwiftData
 struct SIGModel: Identifiable, Hashable {
 
     static var SIGList: [SIGModel] = getData()
+    static var SIGDict: [String: [SIGModel]] = Dictionary(grouping: SIGList, by: { $0.name })
     
     var id: UUID
     
@@ -23,8 +24,8 @@ struct SIGModel: Identifiable, Hashable {
     var image: String
     var whatsapp_link: String
     
-    private var events: [EventModel?] = []
-    private var videos: [VideoModel?] = []
+    var events: [EventModel?]
+    var videos: [VideoModel?]
     
     init(_ name: String, _ realName: String, _ desc: String, _ session: String, _ category: String, _ image:  String, _ whatsapp_link: String) {
         self.id = UUID()
@@ -35,6 +36,7 @@ struct SIGModel: Identifiable, Hashable {
         self.category = category
         self.image = image
         self.whatsapp_link = whatsapp_link
+        
         self.events = EventModel.eventDict[name] ?? []
         self.videos = VideoModel.videoDict[name] ?? []
     }
@@ -54,6 +56,10 @@ struct SIGModel: Identifiable, Hashable {
             SIGModel("Hungers Games", "Archery", "Looking to improve your aim or learn the art of archery? Hungers Games is the SIG for anyone who’s passionate about this exciting sport. Whether you’re a beginner or experienced archer, this group will teach you the skills you need while offering a supportive and fun environment. Draw your bow and join us in the ultimate archery experience!", "Morning & Afternoon", "Physical", "HungerGames", "wa.link/hehe")]
         
         return SIGLists
+    }
+    
+    static func getByName(_ name: String) -> SIGModel? {
+        return SIGModel.SIGDict[name]?[0]
     }
     
     static func getSample() -> SIGModel {

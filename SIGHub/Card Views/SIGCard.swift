@@ -26,7 +26,7 @@ struct SIGCard: View {
             
             // SIG property
             Group {
-                Text(SIG.category.uppercased())
+                Text(SIG.realName.uppercased())
                     .font(.caption)
                     .foregroundColor(.gray).bold()
                 Text(SIG.name)
