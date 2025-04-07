@@ -617,15 +617,9 @@ struct VisualEffectBlur: UIViewRepresentable {
 }
 
 // MARK: - Content View Preview
-//struct ContentView_Previews: PreviewProvider {
-//    @State var path = NavigationPath()
-//    static var previews: some View {
-//        NavigationStack(path: $path) {
-//            DetailsView(
-//                SIG: SIGModel.getSample(),
-//                path: $path
-//            )
-//            .previewLayout(.sizeThatFits)
-//        }
-//    }
-//}
+#Preview {
+    @Previewable @State var path: NavigationPath = NavigationPath()
+    
+    DetailsView(SIG: SIGModel.getSample(), path: $path)
+}
+

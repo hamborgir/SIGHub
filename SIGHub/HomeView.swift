@@ -113,7 +113,7 @@ struct HomeView: View {
                             SIGCategorizedView(categories: $categories, categorizedSIGList: $categorizedSIGList)
                         }
                     }
-                    .padding(.leading, 20)
+                    .padding(.horizontal, 20)
                 }
                 
             }
