@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    @State var navtitle: String = "Home" //nanti ganti (jangan home)
+    @State var navtitle: String = "Discover" //nanti ganti (jangan home)
     @State private var path = NavigationPath()
     
     @State var SIGList: [SIGModel] = SIGModel.SIGList
@@ -94,18 +94,21 @@ struct HomeView: View {
                         VStack (alignment: .leading){
                             
                             VStack (alignment: .leading){
-                                HStack {
-                                    Image(systemName: "hand.wave.fill")
-                                        .foregroundColor(.yellow)
-                                        .font(.system(size: 25))
-                                    Text("Hi,")
-                                        .font(.title)
-                                        .fontWeight(.bold)
-                                }
-                                .padding(.top, 10)
+//                                HStack {
+//                                    Text("Discover")
+//                                        .font(.title)
+//                                        .fontWeight(.bold)
+//                                }
+//                                .padding(.top, 10)
                                 
-                                Text("Explore more about SIG in ADA")
-                                    .font(.title3)
+                                Text("Events")
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                                    .padding(.top, 10)
+                                
+                                Text("Here are several upcoming events on the next 7 days")
+                                    .font(.subheadline)
+                                
                                     
                             }
                             
@@ -138,11 +141,11 @@ struct HomeView: View {
             .onChange(of: searchText) {
                 if searchText.isEmpty {
                     enterSearch = false
-                    navtitle = "Home"
+                    navtitle = "Discover"
                 }
             }
-//            .navigationTitle(navtitle)
-//            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(navtitle)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: SIGModel.self) { SIG in
                 //                 For spotlight and SIGcards
                 

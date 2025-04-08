@@ -36,7 +36,7 @@ struct DetailsView: View {
                         ZStack {
                             SIGDetails(SIG: SIG.self)
                                 .padding(.top, 80)
-                            SIGIcon(imageName: SIG.pp)
+                            SIGIcon(SIG: SIG.self)
                                 .offset(y: -115)
                         }
                         .background(VisualEffectBlur())
@@ -51,8 +51,8 @@ struct DetailsView: View {
                         VStack {
                             Description(SIG: SIG.self)
                                 .padding(.top, 10)
-                            NextEvent()
-                            PastEventView()
+                            NextEvent(SIG: SIG.self)
+                            PastEventView(SIG: SIG.self)
                                 .padding(.top, 15)
                             CopyLink()
                                 .padding(.top, 40)
@@ -226,8 +226,13 @@ struct VideoHeader: View {
 
 // MARK: - Full Screen Video
 struct FullScreenVideo: View {
+    
     @Binding var showVideoOverlay: Bool
-    @State private var player = AVPlayer(url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
+    
+    @State var url = Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!
+        
+    let player = AVPlayer(url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
+    
     @State private var showControls = false
     @State private var isPlaying = false
     @State private var isMuted = false
@@ -241,7 +246,7 @@ struct FullScreenVideo: View {
             Color.black
                 .ignoresSafeArea()
             
-            PlayerUIView(player: player)
+            PlayerUIView(player: AVPlayer(url: url))
                 .aspectRatio(16/9, contentMode: .fit)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .ignoresSafeArea()
@@ -478,7 +483,7 @@ struct SIGIcon: View {
     var SIG: SIGModel
 
     var body: some View {
-        Image(imageName)
+        Image(SIG.image)
             .resizable()
             .frame(width: 150, height: 150)
             .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -659,7 +664,7 @@ struct NextEvent: View {
 
 // MARK: - Past Event
 struct PastEventView: View {
-    private var SIG: SIGModel
+    var SIG: SIGModel
     
     var pastEvents: [EventModel]? {
         let currentDate = Date()
@@ -723,50 +728,50 @@ struct PastEventView: View {
     }
 }
 
-struct PastEventCard: View {
-    let event: PastEvent
-
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(event.image)
-                .resizable()
-                .frame(width: 80, height: 80)
-                .cornerRadius(10)
-                .shadow(radius: 5)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                )
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text(event.title)
-                    .font(.headline)
-
-                Text(event.description)
-                    .font(.callout)
-                    .foregroundColor(.gray)
-
-                Spacer()
-
-                Button(action: {}) {
-                    Text(event.tag)
-                        .textCase(.uppercase)
-                        .fontWeight(.semibold)
-                        .font(.footnote)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 15)
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(5)
-                }
-            }
-            Spacer()
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(15)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-    }
-}
+//struct PastEventCard: View {
+//    let event: EventModel
+//
+//    var body: some View {
+//        HStack(spacing: 10) {
+//            Image(event.image)
+//                .resizable()
+//                .frame(width: 80, height: 80)
+//                .cornerRadius(10)
+//                .shadow(radius: 5)
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 10)
+//                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+//                )
+//
+//            VStack(alignment: .leading, spacing: 8) {
+//                Text(event.name)
+//                    .font(.headline)
+//
+//                Text(event.description)
+//                    .font(.callout)
+//                    .foregroundColor(.gray)
+//
+//                Spacer()
+//
+//                Button(action: {}) {
+//                    Text(event.SIG!.category)
+//                        .textCase(.uppercase)
+//                        .fontWeight(.semibold)
+//                        .font(.footnote)
+//                        .padding(.vertical, 5)
+//                        .padding(.horizontal, 15)
+//                        .background(Color.blue.opacity(0.1))
+//                        .cornerRadius(5)
+//                }
+//            }
+//            Spacer()
+//        }
+//        .padding()
+//        .background(Color.white)
+//        .cornerRadius(15)
+//        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+//    }
+//}
 
 struct PastEvent {
     let image: String

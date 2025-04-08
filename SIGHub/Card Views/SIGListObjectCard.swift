@@ -19,16 +19,36 @@ struct SIGListObjectView: View {
         HStack {
             Image(SIG.image)
                 .resizable()
-                .frame(width: 90, height: 65)
+                .frame(width: 95, height: 70)
                 .cornerRadius(10)
             
             VStack (alignment: .leading) {
                 
-                Text(SIG.category)
-                    .font(.caption2)
-                    .foregroundColor(.pink)
+                
                 Text(SIG.name)
                     .font(.headline)
+                    .padding(.bottom, -2)
+                
+                HStack {
+                    Text(SIG.session)
+                        .font(.caption2)
+                        .foregroundColor(.white)
+                        .padding(5)
+                        .background(Color.orange)
+                        .cornerRadius(5)
+                    
+                    Text(SIG.category)
+                        .font(.caption2)
+                        .foregroundColor(.orange)
+                        .padding(5)
+                        .cornerRadius(5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(.orange, lineWidth: 1)
+                        )
+                        
+                }
+                
                 
                 Text(SIG.desc)
                     .font(.caption)
