@@ -288,6 +288,8 @@ struct SIGCategorizedView: View {
                         }
                     }
                 }
+                .scrollTargetLayout(isEnabled: true)
+                .scrollTargetBehavior(.viewAligned)
             }
         }
     }
