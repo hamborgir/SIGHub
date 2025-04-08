@@ -54,7 +54,7 @@ struct EventModel: Identifiable, Hashable {
             .init(name: "Mabar MLBB", description: "Push rank together 'til we reach mythic! :)", price: 0, SIGName: "GMA", date: "20/3/25 20:00", image: "🏆", location: "Online"),
             .init(name: "Archery Practice", description: "Practice together, improve your skills! This will be our first sesion.", price: 100_000, SIGName: "Hungers Games", date: "22/03/2025 09:00", image: "🏹", location: "BSD"),
             .init(name: "Archery Practice", description: "Practice together, improve your skills! This will be our second sesion.", price: 100_000, SIGName: "Hungers Games", date: "10/04/2025 09:00", image: "🏹", location: "BSD"),
-            .init(name: "Archery Practice", description: "Practice together, improve your skills! This will be our second sesion.", price: 100_000, SIGName: "Hungers Games", date: "10/04/2025 09:00", image: "🏹", location: "BSD")
+            .init(name: "", description: "Practice together, improve your skills! This will be our second sesion.", price: 100_000, SIGName: "Hungers Games", date: "10/04/2025 09:00", image: "🏹", location: "BSD")
         ]
         
         
