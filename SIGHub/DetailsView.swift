@@ -36,7 +36,7 @@ struct DetailsView: View {
                         ZStack {
                             SIGDetails(SIG: SIG.self)
                                 .padding(.top, 80)
-                            SIGIcon()
+                            SIGIcon(SIG: SIG.self)
                                 .offset(y: -115)
                         }
                         .background(VisualEffectBlur())
@@ -475,6 +475,8 @@ struct Slider: View {
 
 // MARK: - SIG Icon
 struct SIGIcon: View {
+    var SIG: SIGModel
+
     var body: some View {
         Image("tes")
             .resizable()
@@ -559,12 +561,12 @@ struct Description: View {
             }
 
             Text("What is TrApple?")
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundColor(.gray)
 
             HStack(alignment: .bottom) {
                 Text(SIG.desc)
-                    .font(.body)
+                    .font(.callout)
                     .lineLimit(isExpanded ? nil : 3)
                     .animation(.easeInOut, value: isExpanded)
 
@@ -573,7 +575,7 @@ struct Description: View {
                 }) {
                     Text(isExpanded ? "less" : "more")
                         .foregroundColor(.blue)
-                        .font(.body)
+                        .font(.callout)
                 }
             }
         }
@@ -595,9 +597,11 @@ struct NextEvent: View {
                 .foregroundColor(.blue)
                 .bold()
                 .padding(.horizontal)
+                .padding(.top, 8)
 
             ZStack(alignment: .bottomLeading) {
                 Image("tes2")
+                    .resizable()
                     .resizable()
                     .aspectRatio(16 / 9, contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -613,7 +617,7 @@ struct NextEvent: View {
                 
                 VStack(alignment: .leading) {
                     Text("TANGGAL EVENT")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundColor(.white.opacity(0.8))
                         .bold()
                     
@@ -623,7 +627,7 @@ struct NextEvent: View {
                         .bold()
                     
                     Text("Lokasi Event")
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundColor(.white.opacity(0.8))
                 }
                 .padding()
@@ -704,19 +708,20 @@ struct PastEventCard: View {
                     .font(.headline)
 
                 Text(event.description)
-                    .font(.subheadline)
+                    .font(.callout)
                     .foregroundColor(.gray)
 
                 Spacer()
 
                 Button(action: {}) {
                     Text(event.tag)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
+                        .textCase(.uppercase)
+                        .fontWeight(.semibold)
+                        .font(.footnote)
                         .padding(.vertical, 5)
                         .padding(.horizontal, 15)
                         .background(Color.blue.opacity(0.1))
-                        .cornerRadius(15)
+                        .cornerRadius(5)
                 }
             }
             Spacer()
