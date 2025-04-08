@@ -224,8 +224,7 @@ struct FullScreenVideo: View {
     @State private var isMuted = false
     @State var url = Bundle.main.url(forResource: "Create Animated Videos in After Effects", withExtension: "mp4")!
     
-    let player = AVPlayer(
-        url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
+    let player = AVPlayer()
 
     var body: some View {
         ZStack {

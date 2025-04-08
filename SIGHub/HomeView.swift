@@ -40,6 +40,7 @@ struct HomeView: View {
                 (choosenFilter == "All" || $0.session.contains(choosenFilter))
             }
     }
+    
     var searchedData: [SIGModel] {
         SIGList
             .filter {
@@ -71,9 +72,13 @@ struct HomeView: View {
                         ScrollView {
                             ForEach(filteredSearchedData){ SIG in
                                 NavigationLink(value: SIG) {
-                                    SIGListObjectView(SIG)
-                                        .listRowInsets(EdgeInsets())
-                                        .listRowSeparator(.hidden)
+                                    VStack {
+                                        
+                                        SIGListObjectView(SIG)
+                                            .listRowInsets(EdgeInsets())
+                                        Divider()
+                                                .frame(width: 300)
+                                    }
                                     
                                 }
                                 
@@ -210,6 +215,18 @@ struct SpotlightView: View {
                         }
                     }
                 }
+                
+                HStack {
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 10))
+                    
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.gray)
+                    
+                }
+                .padding(.top, 5)
+                
                 //        .safeAreaPadding(.horizontal, 30)
 //                .contentMargins(.horizontal,, for: .scrollContent)
                 .scrollTargetBehavior(.paging)
