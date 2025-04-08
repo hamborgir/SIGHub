@@ -204,14 +204,14 @@ struct SpotlightView: View {
                     HStack {
                         ForEach(nearestEventList) { event in
                             NavigationLink(value: event.SIG!) {
-                                SpotlightCard(event.SIG!)
+                                SpotlightCard(event)
                                     .containerRelativeFrame(.horizontal, count: 1, spacing: 100)
                             }
                         }
                     }
                 }
                 //        .safeAreaPadding(.horizontal, 30)
-                .contentMargins(.horizontal, 28, for: .scrollContent)
+//                .contentMargins(.horizontal,, for: .scrollContent)
                 .scrollTargetBehavior(.paging)
             } else {
                 GroupBox(label: Text("No Event To Show")) {

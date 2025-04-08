@@ -8,57 +8,80 @@
 import SwiftUI
 
 struct SpotlightCard: View {
-    var SIG: SIGModel
+    var Event: EventModel
     
     var body: some View {
-        ZStack {
-            // ini nanti ganti image
-            Color(.yellow)
-            Text("🤣")
-//                .frame(width: 300, height: 400)
-                .font(.system(size:200))
-            
-            Color(.black)
-                .opacity(0.3)
-//                .frame(width: 300, height: 400)
-        }
-        .overlay {
-            VStack(alignment: .leading) {
-                Spacer()
-                Text(" "+SIG.realName+" ")
-                    .font(.subheadline)
-                    .foregroundColor(.black.opacity(0.7))
-                    .background(.white)
-                    .clipShape(Capsule())
+        VStack {
+            ZStack {
+                Image(Event.SIG!.image)
+                    .resizable()
+                    .frame(maxWidth: .infinity, maxHeight: 350)
                 
+                Rectangle()
+                    .fill(.black.opacity(0.5))
+                    .frame(maxWidth: .infinity, maxHeight: 350)
+                    
                 
-                Text(SIG.name)
-                    .font(.title)
-                    .bold()
+                VStack (alignment: .leading){
+                    Text("Upcoming Events")
+                        .foregroundColor(.white.opacity(0.9))
+                        
+                    Text(Event.name)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding(.bottom, 4)
+                    
+                    HStack {
+                        Image(systemName: "clock")
+                        Text(Event.formattedDate)
+                    }
+                    
+                    HStack {
+                        Image(systemName: "location")
+                        Text(Event.location)
+                    }
+                }
+                .padding(.leading, 25)
+                .padding(.bottom, 85)
+                .foregroundColor(.white)
+                .frame(width: 350, height: 350, alignment: .bottomLeading)
+                
+//                .background(.blue)
+                
+                VStack{
+                    HStack {
+                        Image(Event.SIG!.pp)
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .cornerRadius(20)
+                        
+                        Text (Event.SIGName)
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            
+                    }
+                    .padding([.bottom, .leading], 20)
+                    .padding([.top, .trailing], 10)
+                    .background(.color)
+                    .cornerRadius(20)
                     .foregroundColor(.white)
+                    
+                }
+                .frame(maxWidth: .infinity, maxHeight: 350, alignment: .bottomLeading)
                 
-                Label("Some event", systemImage: "mappin")
-                    .foregroundColor(.white)
-                    .italic()
-                
-                Label("12:00 29/03/2025", systemImage: "calendar")
-                    .foregroundColor(.white)
-                
-                Label("Hiking", systemImage: "figure.run")
-                    .foregroundColor(.white)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 15)
-            .padding(.vertical, 20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(.color, lineWidth: 30)
+            )
+            .cornerRadius(20)
         }
-        .frame(width: 300, height: 400)
-        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 20)))
     }
     
-    init(_ SIG: SIGModel) {
-        self.SIG = SIG}
+    init(_ Event: EventModel) {
+        self.Event = Event}
 }
 
 #Preview {
-    SpotlightCard(SIGModel.getSample())
+    SpotlightCard(EventModel.getSample())
 }
