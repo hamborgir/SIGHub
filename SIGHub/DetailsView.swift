@@ -68,7 +68,8 @@ struct DetailsView: View {
             //                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
             
             if showVideoOverlay {
-                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
+//                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
+                VideoFullScreen(showVideoOverlay: $showVideoOverlay)
                     .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 1.1)), removal: .opacity))
                     .zIndex(2)
             }
@@ -313,10 +314,10 @@ struct VideoHeader: View {
 //    }
 //}
 
-// MARK: - Full Screen Video
+
 struct FullScreenVideo: View {
     @Binding var showVideoOverlay: Bool
-    @State private var player = AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!)
+    @State private var player = AVPlayer()
     
     @State private var showControls = false
     @State private var isPlaying = false
@@ -325,6 +326,10 @@ struct FullScreenVideo: View {
     @State private var animateButton = false
     @State private var currentTime: Double = 0
     @State private var duration: Double = 1
+    
+    init(showVideoOverlay: Binding<Bool>) {
+        _showVideoOverlay = showVideoOverlay
+    }
     
     var body: some View {
         ZStack {
@@ -347,13 +352,22 @@ struct FullScreenVideo: View {
                     }
             }
             .onAppear {
+                let fileManager = FileManager.default
+                let documentDirectoryURL = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                let savedVideoURL = documentDirectoryURL.appendingPathComponent("defaultVideo.mp4")
+                
+                if fileManager.fileExists(atPath: savedVideoURL.path) {
+                            player = AVPlayer(url: savedVideoURL)
+                        } else {
+                            player = AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!)
+                        }
                 
                 player.play()
                 isPlaying = true
                 
                 player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
                     currentTime = time.seconds
-                    duration = player.currentItem?.duration.seconds ?? 1
+                    duration = player.currentItem?.duration.seconds ?? 10
                     
                     if currentTime >= duration {
                         withAnimation(.easeInOut) {

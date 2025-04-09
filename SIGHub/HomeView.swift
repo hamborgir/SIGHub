@@ -16,7 +16,6 @@ struct HomeView: View {
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
     @State private var categorizedSIGList: [String: [SIGModel]] = Dictionary(grouping: SIGModel.getData()) { $0.category }
     
-    
     //    Data khusus untuk bagian searching
     @State private var sessionFilter = ["All", "Morning", "Afternoon"]
     @State private var choosenFilter = "All"
@@ -44,6 +43,25 @@ struct HomeView: View {
                 (searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText))}
     }
     
+    func saveVideoIfNotExists(videoURL: URL, fileName: String) {
+        let fileManager = FileManager.default
+        do {
+            // Get the documents directory URL
+            let documentDirectoryURL = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+            let destinationURL = documentDirectoryURL.appendingPathComponent(fileName)
+            
+            // Check if the file already exists at the destination
+            if !fileManager.fileExists(atPath: destinationURL.path) {
+                // Copy the file to the destination if it doesn't exist
+                try fileManager.copyItem(at: videoURL, to: destinationURL)
+                print("Video saved successfully.")
+            } else {
+                print("File already exists, skipping save.")
+            }
+        } catch {
+            print("Error saving video: \(error.localizedDescription)")
+        }
+    }
     
     
     // MARK: - Body
@@ -161,6 +179,11 @@ struct HomeView: View {
             }
             
             Spacer()
+        }
+        .onAppear {
+            let url = Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!
+            let fileName = "defaultVideo.mp4"
+            saveVideoIfNotExists(videoURL: url, fileName: fileName)
         }
     }
     
