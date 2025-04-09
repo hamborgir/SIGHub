@@ -146,6 +146,7 @@ struct HomeView: View {
                 //                 For spotlight and SIGcards
                 
                 DetailsView(SIG: SIG, path: $path, navtitle: navtitle)
+                    .padding(.bottom, 20)
                     .ignoresSafeArea()
             }
             .navigationDestination(for: String.self) {category in

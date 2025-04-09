@@ -6,6 +6,8 @@ struct DetailsView: View {
     @State private var showVideoOverlay = false
     @State private var selectedEvent: EventModel? = nil
     @Binding private var path: NavigationPath
+    @State private var showEventPopup = false
+
     
     private var SIG: SIGModel
     private var navtitle: String = "back"
@@ -30,7 +32,8 @@ struct DetailsView: View {
                 }
                 
                 VStack(spacing: 0) {
-                    VideoHeader(showVideoOverlay: $showVideoOverlay, hasScrolled: $hasScrolled, SIG: SIG)
+                    VideoHeader(path: $path, SIG: SIG, hasScrolled: hasScrolled)
+                        .padding(.top, -20)
                     
                     VStack {
                         Description(SIG: SIG.self)
@@ -63,44 +66,29 @@ struct DetailsView: View {
                         path.removeLast()
                     },
                     label: {
-                        if !showVideoOverlay {
-                            if hasScrolled {
-                                withAnimation(.easeInOut(duration: 0.3)) {
-                                    HStack {
-                                        Image(systemName: "chevron.left")
-                                        Text(navtitle)
-                                    }
-                                }
-                            } else {
+                        if hasScrolled {
+                            withAnimation(.easeInOut(duration: 0.3)) {
                                 HStack {
-                                    Image(systemName: "chevron.backward.circle")
-                                        .font(.title)
-                                        .foregroundColor(.blue)
+                                    Image(systemName: "chevron.left")
+                                    Text(navtitle)
                                 }
-                                .frame(
-                                    width: 20, height: 20, alignment: .center
-                                )
-                                .padding(5)
-                                .background(Color.white.opacity(0.3))
-                                .cornerRadius(50)
                             }
+                        } else {
+                            HStack {
+                                Image(systemName: "chevron.backward.circle")
+                                    .font(.title)
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(
+                                width: 20, height: 20, alignment: .center
+                            )
+                            .padding(5)
+                            .background(Color.white.opacity(0.3))
+                            .cornerRadius(50)
                         }
-                    } else {
-                        HStack {
-                            Image(systemName: "chevron.backward.circle.fill")
-                                .font(.title)
-                                .foregroundColor(.white.opacity(0.7))
-                        }
-                        .frame(
-                            width: 20, height: 20, alignment: .center
-                        )
-                        .padding(5)
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(50)
-                    }
                     })
+                    }
             }
-        }
         .overlay(
             Group {
                 if showEventPopup, let event = selectedEvent {
@@ -194,6 +182,7 @@ private var safeAreaTop: CGFloat {
 // MARK: - Header Thumbnail
 struct VideoHeader: View {
 //    @Binding var showVideoOverlay: Bool
+    @State var hasScrolled: Bool
     @Binding private var path: NavigationPath
     var SIG: SIGModel
     
@@ -202,10 +191,7 @@ struct VideoHeader: View {
             Image("Cover")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 410, height: 510)
-                .clipped()
-//                .scaledToFit()
-                .frame(height: 760)
+                .frame(width: 410, height: 760)
                 .overlay(
                     NavigationLink(value: 1){
                         Image(systemName: "play.circle.fill")
@@ -291,6 +277,12 @@ struct VideoHeader: View {
         .clipShape(RoundedRectangle(cornerRadius: 0))
         .ignoresSafeArea(.all, edges: .top)
     }
+    
+    init(path: Binding<NavigationPath>, SIG: SIGModel, hasScrolled: Bool) {
+        self._path = path
+        self.SIG = SIG
+        self.hasScrolled = hasScrolled
+    }
 }
 
 // MARK: - Arrow Label
@@ -321,11 +313,6 @@ struct ArrowLabel: View {
                 }
             }
         }
-    }
-    
-    init(path: Binding<NavigationPath>, SIG: SIGModel) {
-        self._path = path
-        self.SIG = SIG
     }
 }
 
@@ -591,6 +578,7 @@ struct PastEventView: View {
                             PastEventCard(event: events[index])
                                 .tag(index)
                                 .padding(.horizontal, 20)
+                                .padding(.bottom, 15)
                         }
                     }
                     .frame(height: 110)
