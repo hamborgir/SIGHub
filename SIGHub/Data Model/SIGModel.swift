@@ -38,6 +38,18 @@ struct SIGModel: Identifiable, Hashable {
             return "sun.lefthalf.filled"
         }
     }
+    
+    var shiftIconDesc: String {
+        switch self.session {
+        case "Morning":
+            return "Morning"
+        case "Afternoon":
+            return "Afternoon"
+        default:
+            return "Morning & Afternoon"
+        }
+    }
+    
     init(_ name: String, _ realName: String, _ desc: String, _ session: String, _ category: String, _ image:  String, _ whatsapp_link: String, _ pp: String, _ video: String) {
         self.id = UUID()
         self.name = name

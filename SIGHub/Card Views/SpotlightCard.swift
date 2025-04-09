@@ -53,7 +53,7 @@ struct SpotlightCard: View {
                             
                 .overlay(alignment: .topLeading) {
                     HStack {
-                        Text("NEXT EVENT")
+                        Text(event.countdownString)
                             .font(.callout.bold())
                             .foregroundColor(.white)
                             .padding(.horizontal, 10)
@@ -88,7 +88,10 @@ struct SpotlightCard: View {
                 VStack(spacing: 4) {
                     Image(systemName: event.SIG!.shiftIcon)
                         .foregroundColor(.white)
-                        .frame(height: .infinity)
+                    Text(event.SIG!.shiftIconDesc)
+                        .font(.system(size: 8))
+                        .foregroundColor(.white)
+                    
 //                    Button(action: {
 //                        print("foo")
 //                    }) {
