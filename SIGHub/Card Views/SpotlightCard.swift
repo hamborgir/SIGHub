@@ -5,6 +5,8 @@ import AVKit
 struct SpotlightCard: View {
     var event: EventModel
 //    var SIG: SIGModel
+    
+    // TODO: fix spotlightcard size
     var frameMaxWidth: CGFloat = 350
     
     var body: some View {
@@ -34,12 +36,15 @@ struct SpotlightCard: View {
                             Text(event.name)
                                 .font(.title).bold()
                                 .foregroundColor(.white)
-                                .lineLimit(2)
+                                .lineLimit(1)
                                 .truncationMode(.tail)
                                     
                             Text(event.description)
                                 .font(.footnote)
                                 .foregroundColor(.white.opacity(0.8))
+                                .lineLimit(2)
+                                .truncationMode(.tail)
+                                .multilineTextAlignment(.leading)
                         }
                         .padding()
                     )
@@ -105,7 +110,7 @@ struct SpotlightCard: View {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
                 .stroke(Color(red: 160/255, green: 24/255, blue: 32/255), lineWidth: 6)
         )
-        .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 5)
+//        .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 5)
     }
     
     init(_ Event: EventModel) {

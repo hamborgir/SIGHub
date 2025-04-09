@@ -217,7 +217,7 @@ struct SpotlightView: View {
                             }
                         }
                     }
-                    .frame(height: 400)
+                    .frame(height: 410)
                     .tabViewStyle(.page(indexDisplayMode: .never))
 
                     HStack {
