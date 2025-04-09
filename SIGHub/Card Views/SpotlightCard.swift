@@ -15,8 +15,7 @@ struct SpotlightCard: View {
             ZStack {
                 Image(Event.SIG!.image)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: 350, maxHeight: 350)
+                    .frame(maxWidth: .infinity, maxHeight: 350)
                 
                 Rectangle()
                     .fill(.black.opacity(0.5))
@@ -77,7 +76,6 @@ struct SpotlightCard: View {
             )
             .cornerRadius(20)
         }
-        .frame(width: .infinity, height: 350)
     }
     
     init(_ Event: EventModel) {
