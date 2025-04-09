@@ -102,13 +102,14 @@ struct HomeView: View {
 //                                .padding(.top, 10)
                                 
                                 Text("Events")
-                                    .font(.title)
-                                    .fontWeight(.bold)
+                                    .font(.title.bold())
+                                    .foregroundColor(.black)
                                     .padding(.top, 10)
                                 
-                                Text("Here are several upcoming events on the next 7 days")
+                                Text("Here’s what’s coming up in the next 7 days")
                                     .font(.subheadline)
-                                
+                                    .foregroundColor(.gray)
+                                    .padding(.top, 0)
                                     
                             }
                             
@@ -161,6 +162,7 @@ struct HomeView: View {
                                 .bold()
                         }
                     }
+                    .navigationBarTitleDisplayMode(.inline)
                     .navigationBarTitleDisplayMode(.inline)
             }
             
@@ -221,10 +223,10 @@ struct SpotlightView: View {
                 
                 HStack {
                     Image(systemName: "circle.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: 8))
                     
                     Image(systemName: "circle.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: 8))
                         .foregroundColor(.gray)
                     
                 }
@@ -234,14 +236,12 @@ struct SpotlightView: View {
 //                .contentMargins(.horizontal,, for: .scrollContent)
                 .scrollTargetBehavior(.paging)
             } else {
-                GroupBox(label: Text("No Event To Show")) {
-                    Text("You're up to date! :)")
+                GroupBox(label: Text("You're All Set!")) {
+                    Text("Check back soon for new events.")
                         .frame(height: 400)
                 }
             }
         }
-        
-        
     }
 }
 
