@@ -1,20 +1,20 @@
 import AVKit
 import SwiftUI
 
-
 struct DetailsView: View {
     @State private var hasScrolled = false
     @State private var showVideoOverlay = false
-    
+    @State private var showEventPopup = false
+    @State private var selectedEvent: EventModel? = nil
     @Binding private var path: NavigationPath
     
     private var SIG: SIGModel
     private var navtitle: String = "back"
-    
+        
     var body: some View {
         //        NavigationStack {
         ZStack(alignment: .topLeading) {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 GeometryReader { proxy in
                     Color.clear
                         .frame(height: 0)
@@ -31,25 +31,15 @@ struct DetailsView: View {
                 }
                 
                 VStack(spacing: 0) {
-                    VideoHeader(showVideoOverlay: $showVideoOverlay, SIG: SIG)
-                        .ignoresSafeArea(.all, edges: .top)
-                    
-                    ZStack {
-                        ArrowLabel(hasScrolled: $hasScrolled)
-                            .padding(.top, 10)
-                            .padding(.bottom, 32)
-                            .background(VisualEffectBlur())
-                    }
+                    VideoHeader(showVideoOverlay: $showVideoOverlay, hasScrolled: $hasScrolled, SIG: SIG)
                     
                     VStack {
                         Description(SIG: SIG.self)
                             .padding(.top, 15)
-                        NextEvent(SIG: SIG.self)
-                            .padding(.top, 12)
+                        NextEvent(SIG: SIG, showEventPopup: $showEventPopup, selectedEvent: $selectedEvent)
+                            .padding(.top, 10)
                         PastEventView(SIG: SIG.self)
-                            .padding(.top, 15)
-                        CopyLink()
-                            .padding(.top, 40)
+                            .padding(.top, 25)
                     }
                     .background(
                         GeometryReader { proxy in
@@ -69,12 +59,11 @@ struct DetailsView: View {
             //                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
             
             if showVideoOverlay {
-                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
+                FullScreenVideo(showVideoOverlay: $showVideoOverlay, SIG: SIG)
                     .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 1.1)), removal: .opacity))
                     .zIndex(2)
             }
         }
-        //            .toolbarVisibility(.hidden)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -93,23 +82,29 @@ struct DetailsView: View {
                                 }
                             } else {
                                 HStack {
-                                    Image(systemName: "chevron.backward.circle.fill")
+                                    Image(systemName: "chevron.backward.circle")
                                         .font(.title)
-                                        .foregroundColor(.white.opacity(0.7))
+                                        .foregroundColor(.blue)
                                 }
                                 .frame(
                                     width: 20, height: 20, alignment: .center
                                 )
                                 .padding(5)
-                                .background(Color.black.opacity(0.3))
+                                .background(Color.white.opacity(0.3))
                                 .cornerRadius(50)
                             }
                         }
                     })
             }
         }
-        //        }
-        
+        .overlay(
+            Group {
+                if showEventPopup, let event = selectedEvent {
+                    popup(event: event, isVisible: $showEventPopup)
+                        .zIndex(3)
+                }
+            }
+        )
     }
     
     init(SIG: SIGModel, path: Binding<NavigationPath>) {
@@ -195,14 +190,18 @@ private var safeAreaTop: CGFloat {
 // MARK: - Header Thumbnail
 struct VideoHeader: View {
     @Binding var showVideoOverlay: Bool
+    @Binding var hasScrolled: Bool
+    @State private var isVisible = true
     var SIG: SIGModel
     
     var body: some View {
         ZStack(alignment: .bottom) {
             Image("tes2")
                 .resizable()
-                .frame(height: 510)
+//                .aspectRatio(16/9, contentMode: .fit)
                 .clipped()
+//                .scaledToFit()
+                .frame(height: 760)
                 .overlay(
                     Button(action: {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -214,105 +213,116 @@ struct VideoHeader: View {
                             .frame(width: 60, height: 60)
                             .foregroundColor(.white)
                             .shadow(radius: 5)
+                            .padding(.top, -50)
                     }
-                    .padding(.bottom, 140)
+                        .padding(.bottom, 200)
                 )
-
-            VStack(spacing: 0) {
-                Spacer()
+            
+            ZStack(alignment: .bottom) {
                 Image("tes2")
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(16/9, contentMode: .fit)
                     .scaleEffect(x: 1, y: -1)
-                    .frame(height: 270)
+                    .frame(height: 300)
                     .clipped()
                     .overlay(
                         VisualEffectBlur(blurStyle: .systemUltraThinMaterialDark)
                             .opacity(1)
                     )
-            }
-            .frame(height: 140)
-            
+                
 // MARK: - Blur Overlay + Flipped Image
-            VStack(spacing: 0) {
-                Image("tes2")
-                    .resizable()
-                    .scaledToFill()
-                    .scaleEffect(x: 1, y: -1)
-                    .frame(height: 230)
-                    .clipped()
-                    .overlay(
-                        VisualEffectBlur(blurStyle: .systemUltraThinMaterialDark)
-                    )
-            }
-            .frame(height: 140)
-
-            HStack(alignment: .center, spacing: 16) {
-                Image(SIG.pp)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 150, height: 150)
-                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                    .shadow(radius: 5)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 26)
-                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-                    )
-
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(spacing: 4) {
+                    Image(SIG.pp)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 120, height: 120)
+                        .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+                        .shadow(radius: 5)
+                        .padding(.bottom, 25)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                        )
+                    
                     Text(SIG.category.uppercased())
                         .font(.caption2.weight(.semibold))
                         .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
                         .background(Color.white.opacity(0.2))
-                        .clipShape(Capsule())
-
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .padding(.bottom, 8)
+                        
                     Text(SIG.name)
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
-
+                        
                     Text(SIG.realName)
                         .font(.body)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 10)
                         .clipShape(Capsule())
+                        .padding(.bottom, 20)
                         .foregroundColor(Color.white.opacity(0.7))
+                    
+                    Button(action: {
+                        if let url = URL(string: "https://iosda.link/SIGCommunity") {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        Text("Join the Club")
+                            .font(.callout.weight(.semibold))
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 38)
+                            .padding(.vertical, 10)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .shadow(radius: 5)
+                    }
+                    
+                    ArrowLabel(hasScrolled: $hasScrolled)
+                        .padding(.top, 12)
                 }
-
-                Spacer()
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 30)
+                .offset(y: 10)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 20)
         }
         .clipShape(RoundedRectangle(cornerRadius: 0))
+        .ignoresSafeArea(.all, edges: .top)
     }
 }
-//struct VideoHeader: View {
-//    @Binding var showVideoOverlay: Bool
-//    
-//    var body: some View {
-//        ZStack {
-//            Image("tes2")
-//                .resizable()
-//                .frame(height: UIScreen.main.bounds.width * 6 / 5)
-//                .clipped()
-//            
-//            Button(action: {
-//                withAnimation(.easeInOut(duration: 0.3)) {
-//                    showVideoOverlay = true
-//                }
-//            }) {
-//                Image(systemName: "play.circle.fill")
-//                    .resizable()
-//                    .frame(width: 60, height: 60)
-//                    .foregroundColor(.white)
-//                    .shadow(radius: 5)
-//            }
-//        }
-//    }
-//}
+
+// MARK: - Arrow Label
+struct ArrowLabel: View {
+    @Binding var hasScrolled: Bool
+    @State private var isVisible = true
+    
+    var body: some View {
+        VStack {
+            if !hasScrolled {
+                Image(systemName: "chevron.compact.down")
+                    .font(.title)
+                    .foregroundColor(Color.white.opacity(0.7))
+                    .opacity(isVisible ? 1 : 0)
+                    .animation(
+                        .easeInOut(duration: 2).repeatForever(
+                            autoreverses: true), value: isVisible)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(
+                    Animation.easeInOut(duration: 1).repeatForever(
+                        autoreverses: true)
+                ) {
+                    isVisible.toggle()
+                }
+            }
+        }
+    }
+}
 
 // MARK: - Full Screen Video
 struct FullScreenVideo: View {
@@ -327,6 +337,8 @@ struct FullScreenVideo: View {
     @State private var currentTime: Double = 0
     @State private var duration: Double = 1
     
+    var SIG: SIGModel
+    
     var body: some View {
         ZStack {
             Color.black
@@ -334,9 +346,9 @@ struct FullScreenVideo: View {
             
             VStack {
                 PlayerUIView(player: player)
-                    .aspectRatio(16/9, contentMode: .fit)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .ignoresSafeArea()
+                    .clipped()
                     .onTapGesture {
                         withAnimation(.easeInOut) {
                             showControls.toggle()
@@ -366,7 +378,7 @@ struct FullScreenVideo: View {
                 }
             }
             
-            // MARK: - Play and Pause Button (Full Screen Video)
+// MARK: - Play and Pause Button (Full Screen Video)
             if showControls {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
@@ -414,7 +426,7 @@ struct FullScreenVideo: View {
             }
             
             VStack {
-                // MARK: - Navigation Bar (Full Screen Video)
+// MARK: - Navigation Bar (Full Screen Video)
                 HStack {
                     Button(action: {
                         withAnimation(.easeInOut) {
@@ -430,7 +442,7 @@ struct FullScreenVideo: View {
                     
                     Spacer()
                     
-                    Text("TrApple")
+                    Text(SIG.name)
                         .font(.headline)
                         .foregroundColor(.white)
                     
@@ -449,7 +461,7 @@ struct FullScreenVideo: View {
                 Spacer()
             }
             
-            // MARK: - Progress Bar (Full Screen Video)
+// MARK: - Progress Bar (Full Screen Video)
             VStack {
                 Spacer()
                 ProgressBar(
@@ -567,45 +579,13 @@ struct Slider: View {
     }
 }
 
-
-// MARK: - Arrow Label
-struct ArrowLabel: View {
-    @Binding var hasScrolled: Bool
-    @State private var isVisible = true
-    
-    var body: some View {
-        VStack {
-            if !hasScrolled {
-                Image(systemName: "chevron.compact.down")
-                    .font(.title)
-                    .foregroundColor(.gray)
-                    .opacity(isVisible ? 1 : 0)
-                    .animation(
-                        .easeInOut(duration: 2).repeatForever(
-                            autoreverses: true), value: isVisible)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(
-                    Animation.easeInOut(duration: 1).repeatForever(
-                        autoreverses: true)
-                ) {
-                    isVisible.toggle()
-                }
-            }
-        }
-    }
-}
-
 // MARK: - Description
 struct Description: View {
     @State private var isExpanded = false
     var SIG: SIGModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("Description")
                     .font(.title2)
@@ -613,7 +593,7 @@ struct Description: View {
             }
             
             Text("What is TrApple?")
-                .font(.footnote)
+                .font(.callout)
                 .foregroundColor(.gray)
             
             HStack(alignment: .bottom) {
@@ -628,6 +608,9 @@ struct Description: View {
 // MARK: - Next Event
 struct NextEvent: View {
     var SIG: SIGModel
+//    var event: EventModel
+    @Binding var showEventPopup: Bool
+    @Binding var selectedEvent: EventModel?
     
     var nearestEvents: [EventModel]? {
         let currentDate = Date()
@@ -653,19 +636,23 @@ struct NextEvent: View {
                 .padding(.horizontal)
 
             if ((nearestEvents?.isEmpty) != nil) {
-                Text("UPCOMING EVENT")
+                Text("SAVE YOUR SPOT")
                     .font(.footnote)
                     .foregroundColor(.blue)
                     .bold()
                     .padding(.horizontal)
-                    .padding(.top, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 8)
 
                 ZStack(alignment: .bottomLeading) {
-                    Image(SIG.image)
+                    Image("tes2")
+//                    Image(event.SIG!.pp)
                         .resizable()
-                        .aspectRatio(16 / 9, contentMode: .fit)
+                        .aspectRatio(16 / 9, contentMode: .fill)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 200)
+                        .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 15))
-                        .padding()
                     
                     LinearGradient(
                         gradient: Gradient(colors: [Color.black.opacity(0.6), .clear]),
@@ -673,27 +660,39 @@ struct NextEvent: View {
                         endPoint: .top
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .frame(height: 80)
-                    .frame(maxWidth: .infinity, alignment: .bottom)
-                    .padding()
+                    .frame(height: 200)
                     
                     VStack(alignment: .leading) {
-                        Text("TANGGAL EVENT")
+                        Text("event.formattedDate")
+//                        Text(event.formattedDate)
                             .font(.footnote)
                             .foregroundColor(.white.opacity(0.8))
                             .bold()
                         
-                        Text("Nama Event")
+                        Text("event.name")
+//                        Text(event.name)
                             .font(.headline)
                             .foregroundColor(.white)
                             .bold()
                         
-                        Text("Lokasi Event")
+                        Text("event.location")
+//                        Text(event.location)
                             .font(.footnote)
                             .foregroundColor(.white.opacity(0.8))
                     }
                     .padding()
                 }
+                .frame(height: 200)
+                .padding(.horizontal)
+                .onTapGesture {
+                    if let firstEvent = nearestEvents?.first {
+                        selectedEvent = firstEvent
+                        withAnimation(.easeInOut) {
+                            showEventPopup = true
+                        }
+                    }
+                }
+                
             }else {
                 GroupBox(label:
                             Text("You're All Set! Check back soon for new events.")
@@ -701,8 +700,106 @@ struct NextEvent: View {
                     .foregroundColor(.gray)) {
                 }
                 .backgroundStyle(Color.white)
-//                .padding(.top, -10)
             }
+        }
+    }
+}
+
+// MARK: - Next Event Pop Up
+struct popup: View {
+    var event: EventModel
+    @Binding var isVisible: Bool
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.easeInOut) {
+                        isVisible = false
+                    }
+                }
+
+            VStack(spacing: 0) {
+                ZStack(alignment: .topTrailing) {
+                    ZStack(alignment: .topLeading) {
+                        Image("tes2")
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fill)
+                            .frame(height: 300)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+                    }
+
+                    Button {
+                        withAnimation(.easeInOut) {
+                            isVisible = false
+                        }
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.title3.bold())
+                            .foregroundColor(.blue)
+                            .padding(10)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Circle())
+                    }
+                    .padding(12)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(event.SIG!.realName.uppercased())
+                        .font(.subheadline).bold()
+                        .foregroundColor(.white.opacity(0.8))
+                                
+                    Text(event.name)
+                        .font(.title).bold()
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+
+                    Text(event.description)
+                        .font(.footnote)
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineLimit(2)
+                        .truncationMode(.tail)
+                        .multilineTextAlignment(.leading)
+                    
+                    Divider()
+                        .padding(.vertical, 6)
+                        .foregroundColor(.white)
+
+                    HStack {
+                        Image(event.SIG!.pp)
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .cornerRadius(8)
+                                    
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(event.formattedDate)
+                                .font(.callout.bold())
+                                .foregroundColor(.white)
+                                        
+                            Text(event.location)
+                                .font(.footnote)
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                                    
+                        Spacer()
+                                    
+                        VStack(spacing: 4) {
+                            Image(systemName: event.SIG!.shiftIcon)
+                                .foregroundColor(.white)
+                                .frame(height: .infinity)
+                        }
+                    }
+                }
+                .padding()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
+            }
+            .padding()
+            .frame(maxWidth: 500)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }
 }
@@ -710,6 +807,7 @@ struct NextEvent: View {
 // MARK: - Past Event
 struct PastEventView: View {
     var SIG: SIGModel
+//    var event: EventModel
     
     var pastEvents: [EventModel]? {
         let currentDate = Date()
@@ -729,9 +827,7 @@ struct PastEventView: View {
 
     @State private var currentIndex = 0
 
-    
-    // FIXME: Correct the size of tabview container
-    var body: some View {
+        var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Past Events")
                 .font(.title2)
@@ -777,99 +873,11 @@ struct PastEventView: View {
     }
 }
 
-//struct PastEventCard: View {
-//    let event: EventModel
-//
-//    var body: some View {
-//        HStack(spacing: 10) {
-//            Image(event.image)
-//                .resizable()
-//                .frame(width: 80, height: 80)
-//                .cornerRadius(10)
-//                .shadow(radius: 5)
-//                .overlay(
-//                    RoundedRectangle(cornerRadius: 10)
-//                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-//                )
-//
-//            VStack(alignment: .leading, spacing: 8) {
-//                Text(event.name)
-//                    .font(.headline)
-//
-//                Text(event.description)
-//                    .font(.callout)
-//                    .foregroundColor(.gray)
-//
-//                Spacer()
-//
-//                Button(action: {}) {
-//                    Text(event.SIG!.category)
-//                        .textCase(.uppercase)
-//                        .fontWeight(.semibold)
-//                        .font(.footnote)
-//                        .padding(.vertical, 5)
-//                        .padding(.horizontal, 15)
-//                        .background(Color.blue.opacity(0.1))
-//                        .cornerRadius(5)
-//                }
-//            }
-//            Spacer()
-//        }
-//        .padding()
-//        .background(Color.white)
-//        .cornerRadius(15)
-//        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-//    }
-//}
-
 struct PastEvent {
     let image: String
     let title: String
     let description: String
     let tag: String
-}
-
-// MARK: - Group Link
-struct CopyLink: View {
-    @State private var isCopied = false
-    
-    let groupLink = "https://bit.ly"
-    
-    var body: some View {
-        Button(action: {
-            UIPasteboard.general.string = groupLink
-            
-            withAnimation(.easeInOut(duration: 2)) {
-                isCopied = true
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                withAnimation(.easeInOut(duration: 2)) {
-                    isCopied = false
-                }
-            }
-        }) {
-            HStack(spacing: 6) {
-                Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.doc")
-                Text(isCopied ? "Copied!" : "Join Our Community!")
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .textCase(.uppercase)
-            .fontWeight(.semibold)
-            .font(.caption)
-            .frame(height: 40)
-            .foregroundColor(isCopied ? .white : .green)
-            .background(isCopied ? Color.green : Color.white)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.green, lineWidth: 2)
-            )
-            .cornerRadius(20)
-            .transition(.opacity.combined(with: .scale))
-        }
-        .animation(.easeInOut(duration: 0.3), value: isCopied)
-    }
 }
 
 // MARK: - Visual Effect Blur
