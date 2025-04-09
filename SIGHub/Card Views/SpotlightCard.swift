@@ -30,11 +30,11 @@ struct SpotlightCard: View {
                     .overlay (
                         VStack(alignment: .leading, spacing: 4) {
                             Spacer()
-                            Text(event.SIG!.realName)
+                            Text(event.SIG!.name)
                                 .font(.subheadline).bold()
                                 .foregroundColor(.white.opacity(0.8))
                                         
-                            Text(event.name)
+                            Text(event.image+" "+event.name)
                                 .font(.title).bold()
                                 .foregroundColor(.white)
                                 .lineLimit(1)
