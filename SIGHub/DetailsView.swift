@@ -40,7 +40,7 @@ struct DetailsView: View {
                             .padding(.top, 15)
                         NextEvent(SIG: SIG, showEventPopup: $showEventPopup, selectedEvent: $selectedEvent)
                             .padding(.top, 10)
-                        PastEventView(SIG: SIG.self)
+                        PastEventView(SIG: SIG, showEventPopup: $showEventPopup, selectedEvent: $selectedEvent)
                             .padding(.top, 25)
                     }
                     .background(
@@ -478,11 +478,11 @@ struct popup: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(event.SIG!.realName.uppercased())
+                    Text(event.SIG!.name)
                         .font(.subheadline).bold()
                         .foregroundColor(.white.opacity(0.8))
                     
-                    Text(event.name)
+                    Text(event.image+" "+event.name)
                         .font(.title).bold()
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -494,6 +494,14 @@ struct popup: View {
                         .lineLimit(2)
                         .truncationMode(.tail)
                         .multilineTextAlignment(.leading)
+                    
+                    HStack {
+                        Image(systemName: "dollarsign")
+                            .foregroundStyle(.white)
+                        
+                        Text("Rp\(Int(event.price))")
+                            .foregroundColor(.white)
+                    }
                     
                     Divider()
                         .padding(.vertical, 6)
@@ -532,6 +540,7 @@ struct popup: View {
             .frame(maxWidth: 500)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
+        
     }
 }
 
@@ -557,6 +566,8 @@ struct PastEventView: View {
     }
     
     @State private var currentIndex = 0
+    @Binding private var showEventPopup: Bool
+    @Binding private var selectedEvent: EventModel?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -573,6 +584,10 @@ struct PastEventView: View {
                                 .tag(index)
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 15)
+                                .onTapGesture {
+                                    selectedEvent = events[index]
+                                    withAnimation(.easeInOut) {showEventPopup = true}
+                                }
                         }
                     }
                     .frame(height: 110)
@@ -602,6 +617,11 @@ struct PastEventView: View {
                     .padding(.top, -10)
             }
         }
+    }
+    init(SIG: SIGModel, showEventPopup: Binding<Bool>, selectedEvent: Binding<EventModel?>) {
+        self.SIG = SIG
+        _showEventPopup = showEventPopup
+        _selectedEvent = selectedEvent
     }
 }
 
