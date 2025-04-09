@@ -267,33 +267,9 @@ struct FullScreenVideo: View {
                     Spacer()
                 }
                 .padding(.horizontal)
-                .padding(.top, 50)
+                .padding(.top, 20)
 
                 Spacer()
-
-                HStack {
-                    Image("tes2")
-                        .resizable()
-                        .frame(width: 70, height: 70)
-                        .background(Color.gray.opacity(0.5))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                    VStack(alignment: .leading) {
-                        Text("TrApple")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                        Text("Travelling")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        Text("What should you prepare for traveling? :eyes::sparkles:")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 80)
 
                 HStack {
                     Spacer()
@@ -414,6 +390,7 @@ struct SIGIcon: View {
     var body: some View {
         Image(SIG.image)
             .resizable()
+            .aspectRatio(contentMode: .fill)
             .frame(width: 150, height: 150)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .shadow(radius: 5)

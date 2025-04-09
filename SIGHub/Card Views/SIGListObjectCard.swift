@@ -19,6 +19,7 @@ struct SIGListObjectView: View {
         HStack {
             Image(SIG.image)
                 .resizable()
+                .aspectRatio(contentMode: .fill)
                 .frame(width: 95, height: 70)
                 .cornerRadius(10)
             
