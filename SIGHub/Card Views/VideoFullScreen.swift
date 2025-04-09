@@ -39,6 +39,7 @@ struct VideoFullScreen: View {
             VideoPlayer(player: player)
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
+                    player.allowsExternalPlayback = false
                     player.play()
                 }
 
@@ -51,8 +52,8 @@ struct VideoFullScreen: View {
                                 showVideoOverlay = false
                             }
                         }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 40))
+                            Image(systemName: "xmark")
+                                .font(.title2)
                                 .foregroundColor(.white)
                                 .padding()
                         }
