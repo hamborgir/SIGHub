@@ -18,33 +18,56 @@ struct NextEventCard: View {
     
     var body: some View {
         
-        ZStack {
+        
+
+        ZStack(alignment: .bottomLeading) {
             Image(event.SIG!.image)
                 .resizable()
-                .aspectRatio(9 / 16, contentMode: .fit)
+                .aspectRatio(16 / 9, contentMode: .fill)
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 15))
+            
+            LinearGradient(
+                gradient: Gradient(colors: [Color.black.opacity(0.9), .clear]),
+                startPoint: .bottom,
+                endPoint: .top
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .frame(height: 200)
             
             VStack(alignment: .leading) {
                 Text(event.formattedDate)
-                    .font(.caption)
+//                        Text(event.formattedDate)
+                    .font(.footnote)
                     .foregroundColor(.white.opacity(0.8))
                     .bold()
                 
-                Text(event.name)
+                Text(event.image+" "+event.name)
+//                        Text(event.name)
                     .font(.headline)
                     .foregroundColor(.white)
                     .bold()
                 
-                // TODO: Add location data in Event Model
-                Text("Lokasi Event")
+                Text(event.description)
                     .font(.caption)
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                
+                HStack {
+//                    Image(systemName: "mappin")
+//                        .foregroundStyle(.white)
+//                        
+                    Text(event.location)
+                        .font(.footnote)
+                        .foregroundColor(.white.opacity(0.7))
+                }
             }
             .padding()
-            .background(gradient)
         }
-        .padding(.horizontal)
-        .frame(width: 200, height: 200)
+        .padding(.horizontal, 10)
     }
 }
 

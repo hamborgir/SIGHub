@@ -7,11 +7,11 @@ struct DetailsView: View {
     @State private var selectedEvent: EventModel? = nil
     @Binding private var path: NavigationPath
     @State private var showEventPopup = false
-
+    
     
     private var SIG: SIGModel
     private var navtitle: String = "back"
-        
+    
     var body: some View {
         //        NavigationStack {
         ZStack(alignment: .topLeading) {
@@ -62,7 +62,7 @@ struct DetailsView: View {
             //                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
             
             if showVideoOverlay {
-//                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
+                //                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
                 VideoFullScreen(showVideoOverlay: $showVideoOverlay)
                     .navigationBarHidden(true)
                     .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 1.1)), removal: .opacity))
@@ -98,8 +98,8 @@ struct DetailsView: View {
                             .cornerRadius(50)
                         }
                     })
-                    }
             }
+        }
         .overlay(
             Group {
                 if showEventPopup, let event = selectedEvent {
@@ -204,7 +204,7 @@ struct VideoHeader: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 410, height: 760)
                 .overlay(
-//
+                    //
                     Button(action: {
                         showVideoOverlay = true
                     }, label: {
@@ -216,7 +216,7 @@ struct VideoHeader: View {
                             .padding(.top, -50)
                         
                     })
-                        .padding(.bottom, 200)
+                    .padding(.bottom, 200)
                 )
             
             ZStack(alignment: .bottom) {
@@ -231,7 +231,7 @@ struct VideoHeader: View {
                             .opacity(1)
                     )
                 
-// MARK: - Blur Overlay + Flipped Image
+                // MARK: - Blur Overlay + Flipped Image
                 VStack(spacing: 4) {
                     Image(SIG.pp)
                         .resizable()
@@ -245,7 +245,7 @@ struct VideoHeader: View {
                                 .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
                         )
                     
-                    Text(SIG.category.uppercased())
+                    Text(SIG.realName.uppercased())
                         .font(.caption2.weight(.semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 12)
@@ -253,13 +253,13 @@ struct VideoHeader: View {
                         .background(Color.white.opacity(0.2))
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         .padding(.bottom, 8)
-                        
+                    
                     Text(SIG.name)
                         .font(.title)
                         .bold()
                         .foregroundColor(.white)
-                        
-                    Text(SIG.realName)
+                    
+                    Text(SIG.category)
                         .font(.body)
                         .clipShape(Capsule())
                         .padding(.bottom, 20)
@@ -345,13 +345,14 @@ struct Description: View {
                     .bold()
             }
             
-            Text("What is TrApple?")
+            Text("What is \"\(SIG.name)\"?")
                 .font(.callout)
                 .foregroundColor(.gray)
             
             HStack(alignment: .bottom) {
                 Text(SIG.desc)
                     .font(.callout)
+                    .multilineTextAlignment(.leading)
             }
         }
         .padding()
@@ -361,7 +362,7 @@ struct Description: View {
 // MARK: - Next Event
 struct NextEvent: View {
     var SIG: SIGModel
-//    var event: EventModel
+    //    var event: EventModel
     @Binding var showEventPopup: Bool
     @Binding var selectedEvent: EventModel?
     
@@ -383,12 +384,15 @@ struct NextEvent: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Next Event")
-                .font(.title2)
-                .bold()
-                .padding(.horizontal)
-
-            if ((nearestEvents?.isEmpty) != nil) {
+            HStack {
+                Text("Next Event")
+                    .font(.title2)
+                    .padding(.horizontal)
+                    .bold()
+                Spacer()
+            }
+            
+            if let events = nearestEvents {
                 Text("SAVE YOUR SPOT")
                     .font(.footnote)
                     .foregroundColor(.blue)
@@ -396,65 +400,39 @@ struct NextEvent: View {
                     .padding(.horizontal)
                     .padding(.top, 12)
                     .padding(.bottom, 8)
-
-                ZStack(alignment: .bottomLeading) {
-                    Image("tes2")
-//                    Image(event.SIG!.pp)
-                        .resizable()
-                        .aspectRatio(16 / 9, contentMode: .fill)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 200)
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                    
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.black.opacity(0.6), .clear]),
-                        startPoint: .bottom,
-                        endPoint: .top
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .frame(height: 200)
-                    
-                    VStack(alignment: .leading) {
-                        Text("event.formattedDate")
-//                        Text(event.formattedDate)
-                            .font(.footnote)
-                            .foregroundColor(.white.opacity(0.8))
-                            .bold()
-                        
-                        Text("event.name")
-//                        Text(event.name)
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .bold()
-                        
-                        Text("event.location")
-//                        Text(event.location)
-                            .font(.footnote)
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .padding()
-                }
-                .frame(height: 200)
-                .padding(.horizontal)
-                .onTapGesture {
-                    if let firstEvent = nearestEvents?.first {
-                        selectedEvent = firstEvent
-                        withAnimation(.easeInOut) {
-                            showEventPopup = true
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(events, id:\.id) { event in
+                            NavigationLink(value: event) {
+                                NextEventCard(event: event)
+                                    .containerRelativeFrame(.horizontal, count: 1, spacing: 10)
+//                                    .padding(.horizontal)
+                                    .onTapGesture {
+                                        selectedEvent = event
+                                        withAnimation(.easeInOut) {showEventPopup = true}
+                                    }
+                                
+                            }
                         }
                     }
+                    .scrollTargetLayout(isEnabled: true)
+                    //
+                    
                 }
+                .scrollTargetBehavior(.viewAligned)
+                .safeAreaPadding(.horizontal, 25)
                 
             }else {
                 GroupBox(label:
                             Text("You're All Set! Check back soon for new events.")
                     .fontWeight(.regular)
                     .foregroundColor(.gray)) {
-                }
-                .backgroundStyle(Color.white)
+                    }
+                    .backgroundStyle(Color.white)
             }
         }
+        .frame(width: .infinity)
     }
 }
 
@@ -462,7 +440,7 @@ struct NextEvent: View {
 struct popup: View {
     var event: EventModel
     @Binding var isVisible: Bool
-
+    
     var body: some View {
         ZStack {
             Color.black.opacity(0.4)
@@ -472,7 +450,7 @@ struct popup: View {
                         isVisible = false
                     }
                 }
-
+            
             VStack(spacing: 0) {
                 ZStack(alignment: .topTrailing) {
                     ZStack(alignment: .topLeading) {
@@ -483,7 +461,7 @@ struct popup: View {
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                     }
-
+                    
                     Button {
                         withAnimation(.easeInOut) {
                             isVisible = false
@@ -498,18 +476,18 @@ struct popup: View {
                     }
                     .padding(12)
                 }
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text(event.SIG!.realName.uppercased())
                         .font(.subheadline).bold()
                         .foregroundColor(.white.opacity(0.8))
-                                
+                    
                     Text(event.name)
                         .font(.title).bold()
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .truncationMode(.tail)
-
+                    
                     Text(event.description)
                         .font(.footnote)
                         .foregroundColor(.white.opacity(0.8))
@@ -520,25 +498,25 @@ struct popup: View {
                     Divider()
                         .padding(.vertical, 6)
                         .foregroundColor(.white)
-
+                    
                     HStack {
                         Image(event.SIG!.pp)
                             .resizable()
                             .frame(width: 40, height: 40)
                             .cornerRadius(8)
-                                    
+                        
                         VStack(alignment: .leading, spacing: 2) {
                             Text(event.formattedDate)
                                 .font(.callout.bold())
                                 .foregroundColor(.white)
-                                        
+                            
                             Text(event.location)
                                 .font(.footnote)
                                 .foregroundColor(.white.opacity(0.8))
                         }
-                                    
+                        
                         Spacer()
-                                    
+                        
                         VStack(spacing: 4) {
                             Image(systemName: event.SIG!.shiftIcon)
                                 .foregroundColor(.white)
@@ -560,7 +538,7 @@ struct popup: View {
 // MARK: - Past Event
 struct PastEventView: View {
     var SIG: SIGModel
-//    var event: EventModel
+    //    var event: EventModel
     
     var pastEvents: [EventModel]? {
         let currentDate = Date()
@@ -577,16 +555,16 @@ struct PastEventView: View {
         
         return nil
     }
-
+    
     @State private var currentIndex = 0
-
-        var body: some View {
+    
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Past Events")
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-
+            
             if let events = pastEvents {
                 VStack {
                     TabView(selection: $currentIndex) {
@@ -616,12 +594,12 @@ struct PastEventView: View {
                 
             } else {
                 GroupBox(label:
-                    Text("You're All Set! Check back soon for new events.")
+                            Text("You're All Set! Check back soon for new events.")
                     .fontWeight(.regular)
                     .foregroundColor(.gray)) {
-                }
-                .backgroundStyle(Color.white)
-                .padding(.top, -10)
+                    }
+                    .backgroundStyle(Color.white)
+                    .padding(.top, -10)
             }
         }
     }
@@ -637,18 +615,18 @@ struct PastEvent {
 // MARK: - Visual Effect Blur
 struct VisualEffectBlur: UIViewRepresentable {
     var blurStyle: UIBlurEffect.Style
-
+    
     init(blurStyle: UIBlurEffect.Style = .systemMaterial) {
         self.blurStyle = blurStyle
     }
-
+    
     func makeUIView(context: Context) -> UIVisualEffectView {
         let blurEffect = UIBlurEffect(style: blurStyle)
         let blurView = UIVisualEffectView(effect: blurEffect)
         blurView.clipsToBounds = true
         return blurView
     }
-
+    
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         uiView.effect = UIBlurEffect(style: blurStyle)
     }

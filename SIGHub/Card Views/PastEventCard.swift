@@ -12,8 +12,7 @@ struct PastEventCard: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Image(event.image)
-                .resizable()
+            Text(event.image)
                 .frame(width: 80, height: 80)
                 .cornerRadius(10)
                 .shadow(radius: 5)
