@@ -24,11 +24,9 @@ struct VideoFullScreen: View {
         let documentDirectoryURL = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
         let savedVideoURL = documentDirectoryURL.appendingPathComponent("defaultVideo.mp4")
         
-        if fileManager.fileExists(atPath: savedVideoURL.path) {
             _player = State(initialValue: AVPlayer(url: savedVideoURL))
-        } else {
-            _player = State(initialValue: AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!))
-        }
+            print("foo")
+        
     }
 
     var body: some View {
