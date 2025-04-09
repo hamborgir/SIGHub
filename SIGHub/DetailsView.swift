@@ -1,6 +1,7 @@
 import AVKit
 import SwiftUI
 
+
 struct DetailsView: View {
     @State private var hasScrolled = false
     @State private var showVideoOverlay = false
