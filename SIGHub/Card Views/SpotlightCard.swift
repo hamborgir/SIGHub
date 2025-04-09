@@ -85,18 +85,23 @@ struct SpotlightCard: View {
                 Spacer()
                             
                 VStack(spacing: 4) {
-                    Button(action: {}) {
-                        Text("View")
-                            .font(.subheadline).bold()
-                            .frame(width: 60, height: 28)
-                            .background(Color.white.opacity(0.25))
-                            .foregroundColor(.white)
-                            .cornerRadius(14)
-                    }
-                                
-                    Text("Discover More")
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.8))
+                    Image(systemName: event.SIG!.shiftIcon)
+                        .foregroundColor(.white)
+                        .frame(height: .infinity)
+//                    Button(action: {
+//                        print("foo")
+//                    }) {
+//                        Text("Join")
+//                            .font(.subheadline).bold()
+//                            .frame(width: 60, height: 28)
+//                            .background(Color.white.opacity(0.25))
+//                            .foregroundColor(.white)
+//                            .cornerRadius(14)
+//                    }
+//                                
+//                    Text("Discover More")
+//                        .font(.caption2)
+//                        .foregroundColor(.white.opacity(0.8))
                 }
             }
             .padding(.horizontal)

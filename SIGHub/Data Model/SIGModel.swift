@@ -28,14 +28,16 @@ struct SIGModel: Identifiable, Hashable {
     
     var events: [EventModel]?
     
-//    var shiftEmoji {
-//        switch SIG.session {
-//        case "Morning" : return "sun.dust"
-//        case "Afternoon" : return "moon"
-//        case "All" : return ""
-//        }
-//    }
-    
+    var shiftIcon: String {
+        switch self.session {
+        case "Morning":
+            return "sun.dust.fill"
+        case "Afternoon":
+            return "cloud.sun.fill"
+        default:
+            return "sun.lefthalf.filled"
+        }
+    }
     init(_ name: String, _ realName: String, _ desc: String, _ session: String, _ category: String, _ image:  String, _ whatsapp_link: String, _ pp: String, _ video: String) {
         self.id = UUID()
         self.name = name
