@@ -16,9 +16,6 @@ struct HomeView: View {
     @State var categories: [String]  = getCategory(SIGModel.SIGList)
     @State private var categorizedSIGList: [String: [SIGModel]] = Dictionary(grouping: SIGModel.getData()) { $0.category }
     
-    //    @Query() var SIGList: [SIGModel]
-    
-    
     
     //    Data khusus untuk bagian searching
     @State private var sessionFilter = ["All", "Morning", "Afternoon"]
@@ -216,6 +213,7 @@ struct SpotlightView: View {
                             NavigationLink(value: nearestEventList[index].SIG!) {
                                 SpotlightCard(nearestEventList[index])
                                     .tag(index)
+                                    
                             }
                         }
                     }
