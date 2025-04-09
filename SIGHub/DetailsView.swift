@@ -28,6 +28,9 @@ struct DetailsView: View {
                             }
                             .frame(height: 0)
                     }
+                    
+                    
+                    
 
                     VStack(spacing: 0) {
                         VideoHeader(showVideoOverlay: $showVideoOverlay)
