@@ -179,11 +179,11 @@ struct HomeView: View {
                     }
                     .navigationBarTitleDisplayMode(.inline)
             }
-            .navigationDestination(for: Int.self) {event in
-                VideoView(path: $path)
-                    .navigationBarHidden(true)
-                    
-            }
+//            .navigationDestination(for: Int.self) {event in
+//                VideoFullScreen(path: $path)
+//                    .navigationBarHidden(true)
+//                    
+//            }
             
             
             Spacer()

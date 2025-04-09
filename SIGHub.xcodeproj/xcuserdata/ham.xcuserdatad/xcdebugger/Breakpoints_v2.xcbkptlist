@@ -7,156 +7,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "812E4FB1-C523-4BCD-A160-A1E16C1ADB61"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SIGHub/DetailsView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "538"
-            endingLineNumber = "538"
-            landmarkName = "Slider"
-            landmarkType = "14">
-            <Locations>
-               <Location
-                  uuid = "812E4FB1-C523-4BCD-A160-A1E16C1ADB61 - 1a790ad42d744481"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SIGHub.Slider.value.getter : Swift.Double"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ham/Documents/Work/Apple%20Developer%20Academy%20(C8)/Challenge%201/SIGHub/SIGHub/DetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0">
-               </Location>
-               <Location
-                  uuid = "812E4FB1-C523-4BCD-A160-A1E16C1ADB61 - ecf6332be62ef202"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SIGHub.Slider.value.setter : Swift.Double"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ham/Documents/Work/Apple%20Developer%20Academy%20(C8)/Challenge%201/SIGHub/SIGHub/DetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "539"
-                  endingLineNumber = "539">
-               </Location>
-               <Location
-                  uuid = "812E4FB1-C523-4BCD-A160-A1E16C1ADB61 - 96df44fc113ebc13"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SIGHub.Slider.value.modify : Swift.Double"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ham/Documents/Work/Apple%20Developer%20Academy%20(C8)/Challenge%201/SIGHub/SIGHub/DetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "539"
-                  endingLineNumber = "539">
-               </Location>
-               <Location
-                  uuid = "812E4FB1-C523-4BCD-A160-A1E16C1ADB61 - dd5a771903d604bb"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SIGHub.Slider.value.modify : Swift.Double with unmangled suffix &quot;.resume.0&quot;"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///%3Ccompiler-generated%3E"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0">
-               </Location>
-               <Location
-                  uuid = "812E4FB1-C523-4BCD-A160-A1E16C1ADB61 - ee5967a6fc165e45"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SIGHub.Slider.$value.getter : SwiftUI.Binding&lt;Swift.Double&gt;"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ham/Documents/Work/Apple%20Developer%20Academy%20(C8)/Challenge%201/SIGHub/SIGHub/DetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2B8BF152-4A0E-4150-A4C3-BF20E41E734D"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SIGHub/DetailsView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "545"
-            endingLineNumber = "545"
-            landmarkName = "body"
-            landmarkType = "24">
-            <Locations>
-               <Location
-                  uuid = "2B8BF152-4A0E-4150-A4C3-BF20E41E734D - c672c3b6cc49c07c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "SIGHub.Slider.body.getter : some"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ham/Documents/Work/Apple%20Developer%20Academy%20(C8)/Challenge%201/SIGHub/SIGHub/DetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "545"
-                  endingLineNumber = "545">
-               </Location>
-               <Location
-                  uuid = "2B8BF152-4A0E-4150-A4C3-BF20E41E734D - 1fbebae3d8829e52"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (SwiftUI.GeometryProxy) -&gt; &lt;&lt;opaque return type of SwiftUI.View.gesture&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.Gesture&gt;(_: &#x3c4;_1_0, including: SwiftUI.GestureMask) -&gt; some&gt;&gt;.0 in SIGHub.Slider.body.getter : some"
-                  moduleName = "SIGHub.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ham/Documents/Work/Apple%20Developer%20Academy%20(C8)/Challenge%201/SIGHub/SIGHub/DetailsView.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "545"
-                  endingLineNumber = "545">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "74EC6F19-74FD-46F0-B1FA-05042CD4C842"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SIGHub/DetailsView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "547"
-            endingLineNumber = "547"
-            landmarkName = "body"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "7A22AAF2-47C2-498E-A458-D61645923D96"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -164,9 +14,9 @@
             filePath = "SIGHub/DetailsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "370"
-            endingLineNumber = "370"
-            landmarkName = "body"
+            startingLineNumber = "376"
+            endingLineNumber = "376"
+            landmarkName = "nearestEvents"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
@@ -180,10 +30,10 @@
             filePath = "SIGHub/DetailsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "318"
-            endingLineNumber = "318"
-            landmarkName = "FullScreenVideo"
-            landmarkType = "14">
+            startingLineNumber = "324"
+            endingLineNumber = "324"
+            landmarkName = "body"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -196,8 +46,8 @@
             filePath = "SIGHub/DetailsView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "340"
-            endingLineNumber = "340"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>

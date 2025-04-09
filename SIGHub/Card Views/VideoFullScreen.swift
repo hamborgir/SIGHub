@@ -55,13 +55,14 @@ struct VideoFullScreen: View {
                             Image(systemName: "xmark")
                                 .font(.title2)
                                 .foregroundColor(.white)
-                                .padding()
                         }
 
                         Spacer()
                     }
                     Spacer()
                 }
+                .padding(.top, 60)
+                .padding(.leading, 40)
                 .transition(.opacity)
             }
         }

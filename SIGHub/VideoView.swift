@@ -42,6 +42,16 @@ struct VideoView: View {
                     }
             }
             .onAppear {
+                let fileManager = FileManager.default
+                                let documentDirectoryURL = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                                let savedVideoURL = documentDirectoryURL.appendingPathComponent("defaultVideo.mp4")
+                                
+                                if fileManager.fileExists(atPath: savedVideoURL.path) {
+                                            player = AVPlayer(url: savedVideoURL)
+                                        } else {
+                                            player = AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!)
+                                        }
+                                
                 
                 player.play()
                 isPlaying = true
