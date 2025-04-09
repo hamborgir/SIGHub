@@ -201,14 +201,25 @@ private var safeAreaTop: CGFloat {
 // MARK: - Video Header Thumbnail
 struct VideoHeader: View {
     @Binding var showVideoOverlay: Bool
-    
+    private var player: AVPlayer
+
+    init(showVideoOverlay: Binding<Bool>) {
+        self._showVideoOverlay = showVideoOverlay
+        self.player = AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!)
+        self.player.isMuted = true // Set video to be muted on start
+    }
+
     var body: some View {
         ZStack {
-            Image("tes2")
-                .resizable()
-                .frame(height: UIScreen.main.bounds.width * 6 / 5)
+            // Video thumbnail or placeholder before it plays
+            VideoPlayer(player: player)
+                .scaledToFill()
+                .frame(height: UIScreen.main.bounds.height * (2 / 5))
                 .clipped()
-            
+                .onAppear {
+                    player.play() // Play video as soon as the view appears
+                }
+
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showVideoOverlay = true
@@ -223,6 +234,30 @@ struct VideoHeader: View {
         }
     }
 }
+//struct VideoHeader: View {
+//    @Binding var showVideoOverlay: Bool
+//    
+//    var body: some View {
+//        ZStack {
+//            Image("tes2")
+//                .resizable()
+//                .frame(height: UIScreen.main.bounds.width * 6 / 5)
+//                .clipped()
+//            
+//            Button(action: {
+//                withAnimation(.easeInOut(duration: 0.3)) {
+//                    showVideoOverlay = true
+//                }
+//            }) {
+//                Image(systemName: "play.circle.fill")
+//                    .resizable()
+//                    .frame(width: 60, height: 60)
+//                    .foregroundColor(.white)
+//                    .shadow(radius: 5)
+//            }
+//        }
+//    }
+//}
 
 // MARK: - Full Screen Video
 struct FullScreenVideo: View {

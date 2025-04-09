@@ -5,6 +5,7 @@ import AVKit
 struct SpotlightCard: View {
     var event: EventModel
 //    var SIG: SIGModel
+    var mainColor = Color(red: 190/255, green: 24/255, blue: 32/255)
     
     // TODO: fix spotlightcard size
     var frameMaxWidth: CGFloat = 350
@@ -21,7 +22,7 @@ struct SpotlightCard: View {
                         .frame(width: frameMaxWidth)
                             
                     LinearGradient(
-                        gradient: Gradient(colors: [Color.clear, .primaryCol]),
+                        gradient: Gradient(colors: [Color.clear, .primaryColLight]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
