@@ -164,6 +164,8 @@ struct HomeView: View {
                 //                 For spotlight and SIGcards
                 
                 DetailsView(SIG: SIG, path: $path, navtitle: navtitle)
+                    .padding(.bottom, 20)
+                    .ignoresSafeArea()
             }
             .navigationDestination(for: String.self) {category in
                 // Categorized SIG List
@@ -177,6 +179,12 @@ struct HomeView: View {
                     }
                     .navigationBarTitleDisplayMode(.inline)
             }
+            .navigationDestination(for: Int.self) {event in
+                VideoView(path: $path)
+                    .navigationBarHidden(true)
+                    
+            }
+            
             
             Spacer()
         }
@@ -261,19 +269,6 @@ struct SpotlightView: View {
                         }
                     }
                 }
-                
-                
-//                ScrollView(.horizontal, showsIndicators: false) {
-//                    HStack {
-//                        ForEach(nearestEventList) { event in
-//                            NavigationLink(value: event.SIG!) {
-//                                SpotlightCard(event)
-//                                    .containerRelativeFrame(.horizontal, count: 1, spacing: 16)
-//                            }
-//                        }
-//                    }
-//                }
-//                .safeAreaPadding(.horizontal, 5)
                 
             } else {
                 GroupBox(label: Text("No Event To Show")) {
