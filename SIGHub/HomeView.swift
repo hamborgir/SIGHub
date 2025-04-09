@@ -222,11 +222,19 @@ struct SpotlightView: View {
 
                     HStack {
                         ForEach(nearestEventList.indices, id: \.self) { index in
-                            Circle()
-                                .frame(width: 8, height: 8)
-                                .foregroundColor(
-                                    currentIndex == index
-                                    ? .blue : .gray.opacity(0.5))
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    currentIndex = index
+                                }
+                            } label: {
+                                Circle()
+                                    .frame(width: 8, height: 8)
+                                    .foregroundColor(
+                                        currentIndex == index
+                                        ? .blue : .gray.opacity(0.5))
+                                    .transition(.scale)
+                            }
+
                         }
                     }
                 }
