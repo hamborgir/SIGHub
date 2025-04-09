@@ -35,17 +35,17 @@ struct SIGListObjectView: View {
                         .font(.caption2)
                         .foregroundColor(.white)
                         .padding(5)
-                        .background(Color.orange)
+                        .background(.primaryCol)
                         .cornerRadius(5)
                     
                     Text(SIG.category)
                         .font(.caption2)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.primaryCol)
                         .padding(5)
                         .cornerRadius(5)
                         .overlay(
                             RoundedRectangle(cornerRadius: 5)
-                                .stroke(.orange, lineWidth: 1)
+                                .stroke(.primaryCol, lineWidth: 1)
                         )
                         
                 }
