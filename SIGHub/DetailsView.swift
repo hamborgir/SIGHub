@@ -30,16 +30,8 @@ struct DetailsView: View {
                 }
                 
                 VStack(spacing: 0) {
-                    VideoHeader(showVideoOverlay: $showVideoOverlay)
+                    VideoHeader(showVideoOverlay: $showVideoOverlay, SIG: SIG)
                         .ignoresSafeArea(.all, edges: .top)
-                    
-                    ZStack {
-                        SIGDetails(SIG: SIG.self)
-                            .padding(.top, 80)
-                        SIGIcon(SIG: SIG.self)
-                            .offset(y: -115)
-                    }
-                    .background(VisualEffectBlur())
                     
                     ZStack {
                         ArrowLabel(hasScrolled: $hasScrolled)
@@ -50,8 +42,9 @@ struct DetailsView: View {
                     
                     VStack {
                         Description(SIG: SIG.self)
-                            .padding(.top, 10)
+                            .padding(.top, 15)
                         NextEvent(SIG: SIG.self)
+                            .padding(.top, 12)
                         PastEventView(SIG: SIG.self)
                             .padding(.top, 15)
                         CopyLink()
@@ -198,40 +191,101 @@ private var safeAreaTop: CGFloat {
     return windowScene?.windows.first?.safeAreaInsets.top ?? 0
 }
 
-// MARK: - Video Header Thumbnail
+// MARK: - Header Thumbnail
 struct VideoHeader: View {
     @Binding var showVideoOverlay: Bool
-    private var player: AVPlayer
-
-    init(showVideoOverlay: Binding<Bool>) {
-        self._showVideoOverlay = showVideoOverlay
-        self.player = AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!)
-        self.player.isMuted = true // Set video to be muted on start
-    }
-
+    var SIG: SIGModel
+    
     var body: some View {
-        ZStack {
-            // Video thumbnail or placeholder before it plays
-            VideoPlayer(player: player)
-                .scaledToFill()
-                .frame(height: UIScreen.main.bounds.height * (2 / 5))
+        ZStack(alignment: .bottom) {
+            Image("tes2")
+                .resizable()
+                .frame(height: 510)
                 .clipped()
-                .onAppear {
-                    player.play() // Play video as soon as the view appears
+                .overlay(
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showVideoOverlay = true
+                        }
+                    }) {
+                        Image(systemName: "play.circle.fill")
+                            .resizable()
+                            .frame(width: 60, height: 60)
+                            .foregroundColor(.white)
+                            .shadow(radius: 5)
+                    }
+                    .padding(.bottom, 140)
+                )
+
+            VStack(spacing: 0) {
+                Spacer()
+                Image("tes2")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .scaleEffect(x: 1, y: -1)
+                    .frame(height: 270)
+                    .clipped()
+                    .overlay(
+                        VisualEffectBlur(blurStyle: .systemUltraThinMaterialDark)
+                            .opacity(1)
+                    )
+            }
+            .frame(height: 140)
+            
+// MARK: - Blur Overlay + Flipped Image
+            VStack(spacing: 0) {
+                Image("tes2")
+                    .resizable()
+                    .scaledToFill()
+                    .scaleEffect(x: 1, y: -1)
+                    .frame(height: 230)
+                    .clipped()
+                    .overlay(
+                        VisualEffectBlur(blurStyle: .systemUltraThinMaterialDark)
+                    )
+            }
+            .frame(height: 140)
+
+            HStack(alignment: .center, spacing: 16) {
+                Image(SIG.pp)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 150, height: 150)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .shadow(radius: 5)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 26)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
+                    )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(SIG.category.uppercased())
+                        .font(.caption2.weight(.semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.white.opacity(0.2))
+                        .clipShape(Capsule())
+
+                    Text(SIG.name)
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.white)
+
+                    Text(SIG.realName)
+                        .font(.body)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 10)
+                        .clipShape(Capsule())
+                        .foregroundColor(Color.white.opacity(0.7))
                 }
 
-            Button(action: {
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showVideoOverlay = true
-                }
-            }) {
-                Image(systemName: "play.circle.fill")
-                    .resizable()
-                    .frame(width: 60, height: 60)
-                    .foregroundColor(.white)
-                    .shadow(radius: 5)
+                Spacer()
             }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
         }
+        .clipShape(RoundedRectangle(cornerRadius: 0))
     }
 }
 //struct VideoHeader: View {
@@ -512,49 +566,6 @@ struct Slider: View {
     }
 }
 
-// MARK: - SIG Icon
-struct SIGIcon: View {
-    var SIG: SIGModel
-    
-    var body: some View {
-        Image(SIG.image)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: 150, height: 150)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .shadow(radius: 5)
-    }
-}
-
-// MARK: - SIG Details
-struct SIGDetails: View {
-    var SIG: SIGModel
-    
-    var body: some View {
-        VStack(spacing: 5) {
-            Button(action: {}) {
-                Text(SIG.category)
-                    .textCase(.uppercase)
-                    .font(.caption)
-                    .frame(width: 120, height: 40)
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-            }
-            Spacer()
-            Text(SIG.name)
-                .font(.title)
-                .bold()
-            
-            Text(SIG.realName)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(VisualEffectBlur())
-    }
-}
 
 // MARK: - Arrow Label
 struct ArrowLabel: View {
@@ -607,16 +618,6 @@ struct Description: View {
             HStack(alignment: .bottom) {
                 Text(SIG.desc)
                     .font(.callout)
-                    .lineLimit(isExpanded ? nil : 3)
-                    .animation(.easeInOut, value: isExpanded)
-                
-                Button(action: {
-                    isExpanded.toggle()
-                }) {
-                    Text(isExpanded ? "less" : "more")
-                        .foregroundColor(.blue)
-                        .font(.callout)
-                }
             }
         }
         .padding()
@@ -644,58 +645,66 @@ struct NextEvent: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 0) {
             Text("Next Event")
                 .font(.title2)
                 .bold()
                 .padding(.horizontal)
-            
-            Text("HAPPENING NOW")
-                .font(.caption)
-                .foregroundColor(.blue)
-                .bold()
-                .padding(.horizontal)
-                .padding(.top, 8)
-            
-            ZStack(alignment: .bottomLeading) {
-                Image("tes2")
-                    .resizable()
-                    .resizable()
-                    .aspectRatio(16 / 9, contentMode: .fit)
+
+            if ((nearestEvents?.isEmpty) != nil) {
+                Text("UPCOMING EVENT")
+                    .font(.footnote)
+                    .foregroundColor(.blue)
+                    .bold()
+                    .padding(.horizontal)
+                    .padding(.top, 16)
+
+                ZStack(alignment: .bottomLeading) {
+                    Image(SIG.image)
+                        .resizable()
+                        .aspectRatio(16 / 9, contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .padding()
+                    
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.black.opacity(0.6), .clear]),
+                        startPoint: .bottom,
+                        endPoint: .top
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.black.opacity(0.6), .clear]),
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 15))
-                .frame(height: 80)
-                .frame(maxWidth: .infinity, alignment: .bottom)
-                
-                VStack(alignment: .leading) {
-                    Text("TANGGAL EVENT")
-                        .font(.footnote)
-                        .foregroundColor(.white.opacity(0.8))
-                        .bold()
+                    .frame(height: 80)
+                    .frame(maxWidth: .infinity, alignment: .bottom)
+                    .padding()
                     
-                    Text("Nama Event")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .bold()
-                    
-                    Text("Lokasi Event")
-                        .font(.footnote)
-                        .foregroundColor(.white.opacity(0.8))
+                    VStack(alignment: .leading) {
+                        Text("TANGGAL EVENT")
+                            .font(.footnote)
+                            .foregroundColor(.white.opacity(0.8))
+                            .bold()
+                        
+                        Text("Nama Event")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .bold()
+                        
+                        Text("Lokasi Event")
+                            .font(.footnote)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding()
                 }
-                .padding()
+            }else {
+                GroupBox(label:
+                            Text("You're All Set! Check back soon for new events.")
+                    .fontWeight(.regular)
+                    .foregroundColor(.gray)) {
+                }
+                .backgroundStyle(Color.white)
+                .padding(.top, -10)
             }
-            
-            
         }
     }
 }
-
 
 // MARK: - Past Event
 struct PastEventView: View {
@@ -716,9 +725,9 @@ struct PastEventView: View {
         
         return nil
     }
-    
+
     @State private var currentIndex = 0
-    
+
     
     // FIXME: Correct the size of tabview container
     var body: some View {
@@ -727,7 +736,7 @@ struct PastEventView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-            
+
             if let events = pastEvents {
                 VStack {
                     TabView(selection: $currentIndex) {
@@ -755,9 +764,13 @@ struct PastEventView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 
             } else {
-                GroupBox(label: Text("No Event To Show")) {
-                    Text("You're up to date! :)")
+                GroupBox(label:
+                    Text("You're All Set! Check back soon for new events.")
+                    .fontWeight(.regular)
+                    .foregroundColor(.gray)) {
                 }
+                .backgroundStyle(Color.white)
+                .padding(.top, -10)
             }
         }
     }
@@ -860,13 +873,22 @@ struct CopyLink: View {
 
 // MARK: - Visual Effect Blur
 struct VisualEffectBlur: UIViewRepresentable {
+    var blurStyle: UIBlurEffect.Style
+
+    init(blurStyle: UIBlurEffect.Style = .systemMaterial) {
+        self.blurStyle = blurStyle
+    }
+
     func makeUIView(context: Context) -> UIVisualEffectView {
-        let blurEffect = UIBlurEffect(style: .systemMaterial)
+        let blurEffect = UIBlurEffect(style: blurStyle)
         let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.clipsToBounds = true
         return blurView
     }
-    
-    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: blurStyle)
+    }
 }
 
 // MARK: - Content View Preview
