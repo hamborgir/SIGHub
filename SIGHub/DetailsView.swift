@@ -226,175 +226,104 @@ struct VideoHeader: View {
 
 // MARK: - Full Screen Video
 struct FullScreenVideo: View {
-    
     @Binding var showVideoOverlay: Bool
-    
-    @State var url = Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!
-        
-    let player = AVPlayer(url: URL(string: "https://www.w3schools.com/html/mov_bbb.mp4")!)
-    
-    @State private var showControls = false
-    @State private var isPlaying = false
     @State private var isMuted = false
-    @State private var isEditing = false
-    @State private var animateButton = false
-    @State private var currentTime: Double = 0
-    @State private var duration: Double = 1
+    @State var url = Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!
     
+    let player = AVPlayer()
+
     var body: some View {
         ZStack {
-            Color.black
-                .ignoresSafeArea()
-            
-            PlayerUIView(player: AVPlayer(url: url))
-                .aspectRatio(16/9, contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation(.easeInOut) {
-                        showControls.toggle()
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {                            withAnimation(.easeInOut) {
-                            showControls = false
-                        }
-                    }
-                }
+            Color.black.edgesIgnoringSafeArea(.all)
+
+            VideoPlayer(player: AVPlayer(url: url))
+                .edgesIgnoringSafeArea(.all)
                 .onAppear {
                     player.play()
-                    isPlaying = true
-                    
-                    player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
-                        currentTime = time.seconds
-                        duration = player.currentItem?.duration.seconds ?? 1
-                        
-                        if currentTime >= duration {
-                            withAnimation(.easeInOut) {
-                                showVideoOverlay = false
-                                player.pause()
-                                isPlaying = false
-                            }
-                        }
-                    }
+                    player.isMuted = isMuted
                 }
-            
-// MARK: - Play and Pause Button (Full Screen Video)
-            if showControls {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                
-                VStack {
-                    Spacer()
-                    HStack(spacing: 50) {
-                        Button { seek(by: -10) } label: {
-                            rewindForwardIcon(systemName: "gobackward.10")
-                        }
-                    
-                        Button {
-                            togglePlay()
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                                animateButton = true
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                animateButton = false
-                            }
-                        } label: {
-                            ZStack {
-                                if isPlaying {
-                                    Image(systemName: "pause.fill")
-                                        .transition(.scale.combined(with: .opacity))
-                                } else {
-                                    Image(systemName: "play.fill")
-                                        .transition(.scale.combined(with: .opacity))
-                                }
-                            }
-                            .font(.system(size: 45))
-                            .foregroundColor(.white)
-                            .shadow(radius: 10)
-                            .scaleEffect(animateButton ? 1.2 : 1.0)
-                        }
-                        .animation(.easeInOut(duration: 0.3), value: isPlaying)
-                    
-                        Button { seek(by: 10) } label: {
-                            rewindForwardIcon(systemName: "goforward.10")
-                        }
-                    }
-                    Spacer()
+                .onChange(of: isMuted) { newValue in
+                    player.isMuted = newValue
                 }
-                .transition(.opacity)
-            }
-                
+
             VStack {
-// MARK: - Navigation Bar (Full Screen Video)
                 HStack {
                     Button(action: {
-                        withAnimation(.easeInOut) {
-                            showVideoOverlay = false
+                        withAnimation {
                             player.pause()
+                            player.seek(to: .zero)
+                            showVideoOverlay = false
                         }
                     }) {
                         Image(systemName: "xmark")
                             .font(.title2)
                             .foregroundColor(.white)
-                            .padding()
                     }
-                    
                     Spacer()
-                        
                     Text("TrApple")
                         .font(.headline)
                         .foregroundColor(.white)
-                        
                     Spacer()
-                        
-                    Button(action: {
-                        isMuted.toggle()
-                        player.isMuted = isMuted
-                    }) {
-                        Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                            .font(.title3)
-                            .foregroundColor(.white)
-                            .padding(.trailing, 10)
-                    }
+                    Spacer()
                 }
+                .padding(.horizontal)
+                .padding(.top, 50)
+
                 Spacer()
+
+                HStack {
+                    Image("tes2")
+                        .resizable()
+                        .frame(width: 70, height: 70)
+                        .background(Color.gray.opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                    VStack(alignment: .leading) {
+                        Text("TrApple")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        Text("Travelling")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        Text("What should you prepare for traveling? :eyes::sparkles:")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 80)
+
+                HStack {
+                    Spacer()
+
+                    VStack(spacing: 20) {
+                        Button(action: {
+                            isMuted.toggle()
+                            player.isMuted = isMuted
+                        }) {
+                            Image(
+                                systemName: isMuted
+                                    ? "speaker.slash.fill"
+                                    : "speaker.wave.2.fill"
+                            )
+                            .font(.title2)
+                            .foregroundColor(.white)
+                        }
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.bottom, 80)
+                }
             }
-                
-// MARK: - Progress Bar (Full Screen Video)
             VStack {
                 Spacer()
-                ProgressBar(
-                    currentTime: $currentTime,
-                    duration: duration,
-                    isEditing: $isEditing
-                ) { newTime in
-                    player.seek(to: CMTime(seconds: newTime, preferredTimescale: 600))
-                }
-                .padding(.bottom, 20)
+                Rectangle()
+                    .frame(height: 4)
+                    .foregroundColor(.white.opacity(0.8))
+                    .padding(.horizontal)
             }
         }
-        .animation(.easeInOut, value: showControls)
-    }
-    
-    func togglePlay() {
-        if isPlaying {
-            player.pause()
-        } else {
-            player.play()
-        }
-        isPlaying.toggle()
-    }
-    
-    func seek(by seconds: Double) {
-        let newTime = currentTime + seconds
-        player.seek(to: CMTime(seconds: max(0, min(duration, newTime)), preferredTimescale: 600))
-    }
-
-    func rewindForwardIcon(systemName: String) -> some View {
-        Image(systemName: systemName)
-            .font(.system(size: 28))
-            .foregroundColor(.white)
-            .shadow(radius: 5)
     }
 }
 
