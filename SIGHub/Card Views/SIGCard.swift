@@ -34,7 +34,7 @@ struct SIGCard: View {
                     .foregroundColor(.black)
                 Text(SIG.session)
                     .font(.caption)
-                    .foregroundColor(.orange)
+                    .foregroundColor(.primaryCol)
             }
             .frame(maxWidth:.infinity, alignment: .topLeading)
             

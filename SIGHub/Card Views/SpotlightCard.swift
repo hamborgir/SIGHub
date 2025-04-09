@@ -21,7 +21,7 @@ struct SpotlightCard: View {
                         .frame(width: frameMaxWidth)
                             
                     LinearGradient(
-                        gradient: Gradient(colors: [Color.clear, Color(red: 190/255, green: 24/255, blue: 32/255)]),
+                        gradient: Gradient(colors: [Color.clear, .primaryCol]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -57,11 +57,11 @@ struct SpotlightCard: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 0)
-                            .background(Color(red: 160/255, green: 24/255, blue: 32/255))
+                            .background(.primaryCol)
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                             .padding(8)
                     }
-                    .background(Color(red: 160/255, green: 24/255, blue: 32/255))
+                    .background(.primaryCol)
                     .clipShape(RoundedCorners(tl: 0, tr: 0, bl: 0, br: 15))
                 }
 
@@ -103,12 +103,12 @@ struct SpotlightCard: View {
             .padding(.top, 5)
             .padding(.bottom, 10)
         }
-        .background(Color(red: 160/255, green: 24/255, blue: 32/255))
+        .background(.primaryCol)
         .frame(width: frameMaxWidth, height: 400)
         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color(red: 160/255, green: 24/255, blue: 32/255), lineWidth: 6)
+                .stroke(.primaryCol, lineWidth: 6)
         )
 //        .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 5)
     }
