@@ -55,6 +55,14 @@ struct EventModel: Identifiable, Hashable {
         }
     }
     
+    var priceString: String {
+        if price == 0 {
+            return "FREE!"
+        }
+        
+        return "Rp\(Int(price).formatted())"
+    }
+    
     
     init(name: String, description: String, price: Double, SIGName: String, date: String, image: String, location: String) {
         self.name = name

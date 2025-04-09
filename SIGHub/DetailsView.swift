@@ -454,7 +454,7 @@ struct popup: View {
             VStack(spacing: 0) {
                 ZStack(alignment: .topTrailing) {
                     ZStack(alignment: .topLeading) {
-                        Image("tes2")
+                        Image(event.SIG!.image)
                             .resizable()
                             .aspectRatio(1, contentMode: .fill)
                             .frame(height: 300)
@@ -496,10 +496,7 @@ struct popup: View {
                         .multilineTextAlignment(.leading)
                     
                     HStack {
-                        Image(systemName: "dollarsign")
-                            .foregroundStyle(.white)
-                        
-                        Text("Rp\(Int(event.price))")
+                        Text(event.priceString)
                             .foregroundColor(.white)
                     }
                     
