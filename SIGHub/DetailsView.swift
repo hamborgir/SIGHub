@@ -189,7 +189,7 @@ struct VideoHeader: View {
     
     var body: some View {
         ZStack(alignment: .bottom) {
-            Image("Trapple")
+            Image("Cover")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 410, height: 510)
@@ -274,9 +274,6 @@ struct VideoHeader: View {
             .padding(.bottom, 20)
         }
         .clipShape(RoundedRectangle(cornerRadius: 0))
-        .navigationDestination(for: EventModel.self) {event in
-            VideoView(path: $path)
-        }
     }
     
     init(path: Binding<NavigationPath>, SIG: SIGModel) {
