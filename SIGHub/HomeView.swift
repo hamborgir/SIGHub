@@ -101,12 +101,12 @@ struct HomeView: View {
 //                                }
 //                                .padding(.top, 10)
                                 
-                                Text("Events")
+                                Text("Upcoming Events")
                                     .font(.title)
                                     .fontWeight(.bold)
                                     .padding(.top, 10)
                                 
-                                Text("Here are several upcoming events on the next 7 days")
+                                Text("Check out the exciting events happening in the next 7 days!")
                                     .font(.subheadline)
                                 
                                     
@@ -114,7 +114,6 @@ struct HomeView: View {
                             
                             // Spotlight Event
                             SpotlightView()
-                                .padding(.vertical, 5)
                             
                             
                             // Categorized
@@ -205,34 +204,47 @@ struct SpotlightView: View {
         return eventWithinNDays
     }
     
+    @State private var currentIndex: Int = 0
+    
     var body: some View {
         VStack {
             if isNearestEventAvailable {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(nearestEventList) { event in
-                            NavigationLink(value: event.SIG!) {
-                                SpotlightCard(event)
-                                    .containerRelativeFrame(.horizontal, count: 1, spacing: 100)
+                VStack {
+                    TabView(selection: $currentIndex) {
+                        ForEach(nearestEventList.indices, id: \.self) { index in
+                            NavigationLink(value: nearestEventList[index].SIG!) {
+                                SpotlightCard(nearestEventList[index])
+                                    .tag(index)
                             }
+                        }
+                    }
+                    .frame(height: 400)
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+
+                    HStack {
+                        ForEach(nearestEventList.indices, id: \.self) { index in
+                            Circle()
+                                .frame(width: 8, height: 8)
+                                .foregroundColor(
+                                    currentIndex == index
+                                    ? .blue : .gray.opacity(0.5))
                         }
                     }
                 }
                 
-                HStack {
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 10))
-                    
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(.gray)
-                    
-                }
-                .padding(.top, 5)
                 
-                //        .safeAreaPadding(.horizontal, 30)
-//                .contentMargins(.horizontal,, for: .scrollContent)
-                .scrollTargetBehavior(.paging)
+//                ScrollView(.horizontal, showsIndicators: false) {
+//                    HStack {
+//                        ForEach(nearestEventList) { event in
+//                            NavigationLink(value: event.SIG!) {
+//                                SpotlightCard(event)
+//                                    .containerRelativeFrame(.horizontal, count: 1, spacing: 16)
+//                            }
+//                        }
+//                    }
+//                }
+//                .safeAreaPadding(.horizontal, 5)
+                
             } else {
                 GroupBox(label: Text("No Event To Show")) {
                     Text("You're up to date! :)")
