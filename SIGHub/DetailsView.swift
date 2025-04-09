@@ -6,118 +6,118 @@ struct DetailsView: View {
     @State private var showVideoOverlay = false
     
     @Binding private var path: NavigationPath
-
+    
     private var SIG: SIGModel
     private var navtitle: String = "back"
-
+    
     var body: some View {
-//        NavigationStack {
-            ZStack(alignment: .topLeading) {
-                ScrollView {
-                    GeometryReader { proxy in
-                        Color.clear
-                            .frame(height: 0)
-                            .onAppear {
-                                hasScrolled =
-                                    proxy.frame(in: .global).minY < -100
+        //        NavigationStack {
+        ZStack(alignment: .topLeading) {
+            ScrollView {
+                GeometryReader { proxy in
+                    Color.clear
+                        .frame(height: 0)
+                        .onAppear {
+                            hasScrolled =
+                            proxy.frame(in: .global).minY < -100
+                        }
+                        .onChange(of: proxy.frame(in: .global).minY) {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                hasScrolled = proxy.frame(in: .global).minY < -100
                             }
-                            .onChange(of: proxy.frame(in: .global).minY) {
+                        }
+                        .frame(height: 0)
+                }
+                
+                VStack(spacing: 0) {
+                    VideoHeader(showVideoOverlay: $showVideoOverlay)
+                        .ignoresSafeArea(.all, edges: .top)
+                    
+                    ZStack {
+                        SIGDetails(SIG: SIG.self)
+                            .padding(.top, 80)
+                        SIGIcon(SIG: SIG.self)
+                            .offset(y: -115)
+                    }
+                    .background(VisualEffectBlur())
+                    
+                    ZStack {
+                        ArrowLabel(hasScrolled: $hasScrolled)
+                            .padding(.top, 10)
+                            .padding(.bottom, 32)
+                            .background(VisualEffectBlur())
+                    }
+                    
+                    VStack {
+                        Description(SIG: SIG.self)
+                            .padding(.top, 10)
+                        NextEvent(SIG: SIG.self)
+                        PastEventView(SIG: SIG.self)
+                            .padding(.top, 15)
+                        CopyLink()
+                            .padding(.top, 40)
+                    }
+                    .background(
+                        GeometryReader { proxy in
+                            Color.clear.preference(
+                                key: ScrollOffsetKey.self,
+                                value: proxy.frame(in: .global).minY)
+                        })
+                }
+            }
+            .onPreferenceChange(ScrollOffsetKey.self) { value in
+                withAnimation {
+                    hasScrolled = value < -100
+                }
+            }
+            
+            //                NavBar(hasScrolled: $hasScrolled)
+            //                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
+            
+            if showVideoOverlay {
+                FullScreenVideo(showVideoOverlay: $showVideoOverlay)
+                    .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 1.1)), removal: .opacity))
+                    .zIndex(2)
+            }
+        }
+        //            .toolbarVisibility(.hidden)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(
+                    action: {
+                        path.removeLast()
+                    },
+                    label: {
+                        if !showVideoOverlay {
+                            if hasScrolled {
                                 withAnimation(.easeInOut(duration: 0.3)) {
-                                    hasScrolled = proxy.frame(in: .global).minY < -100
-                                }
-                            }
-                            .frame(height: 0)
-                    }
-
-                    VStack(spacing: 0) {
-                        VideoHeader(showVideoOverlay: $showVideoOverlay)
-                            .ignoresSafeArea(.all, edges: .top)
-
-                        ZStack {
-                            SIGDetails(SIG: SIG.self)
-                                .padding(.top, 80)
-                            SIGIcon(SIG: SIG.self)
-                                .offset(y: -115)
-                        }
-                        .background(VisualEffectBlur())
-
-                        ZStack {
-                            ArrowLabel(hasScrolled: $hasScrolled)
-                                .padding(.top, 10)
-                                .padding(.bottom, 32)
-                                .background(VisualEffectBlur())
-                        }
-
-                        VStack {
-                            Description(SIG: SIG.self)
-                                .padding(.top, 10)
-                            NextEvent(SIG: SIG.self)
-                            PastEventView(SIG: SIG.self)
-                                .padding(.top, 15)
-                            CopyLink()
-                                .padding(.top, 40)
-                        }
-                        .background(
-                            GeometryReader { proxy in
-                                Color.clear.preference(
-                                    key: ScrollOffsetKey.self,
-                                    value: proxy.frame(in: .global).minY)
-                            })
-                    }
-                }
-                .onPreferenceChange(ScrollOffsetKey.self) { value in
-                    withAnimation {
-                        hasScrolled = value < -100
-                    }
-                }
-
-//                NavBar(hasScrolled: $hasScrolled)
-//                    .position(x: UIScreen.main.bounds.width / 2, y: 0)
-
-                if showVideoOverlay {
-                    FullScreenVideo(showVideoOverlay: $showVideoOverlay)
-                        .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 1.1)), removal: .opacity))
-                        .zIndex(2)
-                }
-            }
-//            .toolbarVisibility(.hidden)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
-                        action: {
-                            path.removeLast()
-                        },
-                        label: {
-                            if !showVideoOverlay {
-                                if hasScrolled {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        HStack {
-                                            Image(systemName: "chevron.left")
-                                            Text(navtitle)
-                                        }
-                                    }
-                                } else {
                                     HStack {
-                                        Image(systemName: "chevron.backward.circle.fill")
-                                            .font(.title)
-                                            .foregroundColor(.white.opacity(0.7))
+                                        Image(systemName: "chevron.left")
+                                        Text(navtitle)
                                     }
-                                    .frame(
-                                        width: 20, height: 20, alignment: .center
-                                    )
-                                    .padding(5)
-                                    .background(Color.black.opacity(0.3))
-                                    .cornerRadius(50)
                                 }
+                            } else {
+                                HStack {
+                                    Image(systemName: "chevron.backward.circle.fill")
+                                        .font(.title)
+                                        .foregroundColor(.white.opacity(0.7))
+                                }
+                                .frame(
+                                    width: 20, height: 20, alignment: .center
+                                )
+                                .padding(5)
+                                .background(Color.black.opacity(0.3))
+                                .cornerRadius(50)
                             }
+                        }
                     })
-                }
             }
-//        }
-
+        }
+        //        }
+        
     }
-
+    
     init(SIG: SIGModel, path: Binding<NavigationPath>) {
         self.SIG = SIG
         self._path = path
@@ -141,12 +141,12 @@ struct ScrollOffsetKey: PreferenceKey {
 // MARK: - Navigation Bar
 struct NavBar: View {
     @Binding var hasScrolled: Bool
-
+    
     var body: some View {
         ZStack {
             if hasScrolled {
                 Color.clear.background(VisualEffectBlur())
-
+                
                 HStack(alignment: .center) {
                     Button(action: {}) {
                         HStack {
@@ -162,7 +162,7 @@ struct NavBar: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 7))
                         }
                     }
-
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 16)
@@ -174,7 +174,7 @@ struct NavBar: View {
                             .font(.title)
                             .foregroundColor(.white.opacity(0.7))
                     }
-
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 16)
@@ -194,21 +194,21 @@ private var safeAreaTop: CGFloat {
     let windowScene = UIApplication.shared
         .connectedScenes
         .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
-
+    
     return windowScene?.windows.first?.safeAreaInsets.top ?? 0
 }
 
 // MARK: - Video Header Thumbnail
 struct VideoHeader: View {
     @Binding var showVideoOverlay: Bool
-
+    
     var body: some View {
         ZStack {
             Image("tes2")
                 .resizable()
                 .frame(height: UIScreen.main.bounds.width * 6 / 5)
                 .clipped()
-
+            
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showVideoOverlay = true
@@ -227,79 +227,173 @@ struct VideoHeader: View {
 // MARK: - Full Screen Video
 struct FullScreenVideo: View {
     @Binding var showVideoOverlay: Bool
-    @State private var isMuted = false
-    @State var url = Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!
+    @State private var player = AVPlayer(url: Bundle.main.url(forResource: "defaultVideo", withExtension: "mp4")!)
     
-    let player = AVPlayer()
-
+    @State private var showControls = false
+    @State private var isPlaying = false
+    @State private var isMuted = false
+    @State private var isEditing = false
+    @State private var animateButton = false
+    @State private var currentTime: Double = 0
+    @State private var duration: Double = 1
+    
     var body: some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-
-            VideoPlayer(player: AVPlayer(url: url))
-                .edgesIgnoringSafeArea(.all)
-                .onAppear {
-                    player.play()
-                    player.isMuted = isMuted
-                }
-                .onChange(of: isMuted) { newValue in
-                    player.isMuted = newValue
-                }
-
+            Color.black
+                .ignoresSafeArea()
+            
             VStack {
+                PlayerUIView(player: player)
+                    .aspectRatio(16/9, contentMode: .fit)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.easeInOut) {
+                            showControls.toggle()
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {                            withAnimation(.easeInOut) {
+                            showControls = false
+                        }
+                        }
+                    }
+            }
+            .onAppear {
+                
+                player.play()
+                isPlaying = true
+                
+                player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 0.1, preferredTimescale: 600), queue: .main) { time in
+                    currentTime = time.seconds
+                    duration = player.currentItem?.duration.seconds ?? 1
+                    
+                    if currentTime >= duration {
+                        withAnimation(.easeInOut) {
+                            showVideoOverlay = false
+                            player.pause()
+                            isPlaying = false
+                        }
+                    }
+                }
+            }
+            
+            // MARK: - Play and Pause Button (Full Screen Video)
+            if showControls {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                
+                VStack {
+                    Spacer()
+                    HStack(spacing: 50) {
+                        Button { seek(by: -10) } label: {
+                            rewindForwardIcon(systemName: "gobackward.10")
+                        }
+                        
+                        Button {
+                            togglePlay()
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                                animateButton = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                animateButton = false
+                            }
+                        } label: {
+                            ZStack {
+                                if isPlaying {
+                                    Image(systemName: "pause.fill")
+                                        .transition(.scale.combined(with: .opacity))
+                                } else {
+                                    Image(systemName: "play.fill")
+                                        .transition(.scale.combined(with: .opacity))
+                                }
+                            }
+                            .font(.system(size: 45))
+                            .foregroundColor(.white)
+                            .shadow(radius: 10)
+                            .scaleEffect(animateButton ? 1.2 : 1.0)
+                        }
+                        .animation(.easeInOut(duration: 0.3), value: isPlaying)
+                        
+                        Button { seek(by: 10) } label: {
+                            rewindForwardIcon(systemName: "goforward.10")
+                        }
+                    }
+                    Spacer()
+                }
+                .transition(.opacity)
+            }
+            
+            VStack {
+                // MARK: - Navigation Bar (Full Screen Video)
                 HStack {
                     Button(action: {
-                        withAnimation {
-                            player.pause()
-                            player.seek(to: .zero)
+                        withAnimation(.easeInOut) {
                             showVideoOverlay = false
+                            player.pause()
                         }
                     }) {
                         Image(systemName: "xmark")
                             .font(.title2)
                             .foregroundColor(.white)
+                            .padding()
                     }
+                    
                     Spacer()
+                    
                     Text("TrApple")
                         .font(.headline)
                         .foregroundColor(.white)
+                    
                     Spacer()
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.top, 20)
-
-                Spacer()
-
-                HStack {
-                    Spacer()
-
-                    VStack(spacing: 20) {
-                        Button(action: {
-                            isMuted.toggle()
-                            player.isMuted = isMuted
-                        }) {
-                            Image(
-                                systemName: isMuted
-                                    ? "speaker.slash.fill"
-                                    : "speaker.wave.2.fill"
-                            )
-                            .font(.title2)
+                    
+                    Button(action: {
+                        isMuted.toggle()
+                        player.isMuted = isMuted
+                    }) {
+                        Image(systemName: isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.title3)
                             .foregroundColor(.white)
-                        }
+                            .padding(.trailing, 10)
                     }
-                    .padding(.trailing, 20)
-                    .padding(.bottom, 80)
                 }
+                Spacer()
             }
+            
+            // MARK: - Progress Bar (Full Screen Video)
             VStack {
                 Spacer()
-                Rectangle()
-                    .frame(height: 4)
-                    .foregroundColor(.white.opacity(0.8))
-                    .padding(.horizontal)
+                ProgressBar(
+                    currentTime: $currentTime,
+                    duration: duration,
+                    isEditing: $isEditing
+                ) { newTime in
+                    player.seek(to: CMTime(seconds: newTime, preferredTimescale: 600))
+                }
+                .padding(.bottom, 20)
             }
         }
+        .animation(.easeInOut, value: showControls)
+    }
+    
+    func togglePlay() {
+        if isPlaying {
+            player.pause()
+        } else {
+            player.play()
+        }
+        isPlaying.toggle()
+    }
+    
+    func seek(by seconds: Double) {
+        let newTime = currentTime + seconds
+        player.seek(to: CMTime(seconds: max(0, min(duration, newTime)), preferredTimescale: 600))
+    }
+    
+    func rewindForwardIcon(systemName: String) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 28))
+            .foregroundColor(.white)
+            .shadow(radius: 5)
     }
 }
 
@@ -309,7 +403,7 @@ struct ProgressBar: View {
     var duration: Double
     @Binding var isEditing: Bool
     var onSeek: (Double) -> Void
-
+    
     var body: some View {
         VStack(spacing: 8) {
             Slider(value: $currentTime, range: 0...duration, isEditing: $isEditing) { editing in
@@ -318,7 +412,7 @@ struct ProgressBar: View {
                     onSeek(currentTime)
                 }
             }
-
+            
             HStack {
                 Text(formatTime(currentTime))
                 Spacer()
@@ -329,7 +423,7 @@ struct ProgressBar: View {
         }
         .padding(.horizontal, 10)
     }
-
+    
     func formatTime(_ time: Double) -> String {
         let minutes = Int(time) / 60
         let seconds = Int(time) % 60
@@ -343,21 +437,21 @@ struct Slider: View {
     let range: ClosedRange<Double>
     @Binding var isEditing: Bool
     var onEditingChanged: (Bool) -> Void
-
+    
     var body: some View {
         GeometryReader { geometry in
             let width = geometry.size.width
             let progress = CGFloat((value - range.lowerBound) / (range.upperBound - range.lowerBound))
-
+            
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color.white.opacity(0.2))
                     .frame(height: isEditing ? 6 : 3)
-
+                
                 Capsule()
                     .fill(Color.white)
                     .frame(width: width * progress, height: isEditing ? 6 : 3)
-
+                
                 Circle()
                     .fill(Color.white)
                     .frame(width: isEditing ? 18 : 12, height: isEditing ? 18 : 12)
@@ -386,7 +480,7 @@ struct Slider: View {
 // MARK: - SIG Icon
 struct SIGIcon: View {
     var SIG: SIGModel
-
+    
     var body: some View {
         Image(SIG.image)
             .resizable()
@@ -400,7 +494,7 @@ struct SIGIcon: View {
 // MARK: - SIG Details
 struct SIGDetails: View {
     var SIG: SIGModel
-
+    
     var body: some View {
         VStack(spacing: 5) {
             Button(action: {}) {
@@ -416,7 +510,7 @@ struct SIGDetails: View {
             Text(SIG.name)
                 .font(.title)
                 .bold()
-
+            
             Text(SIG.realName)
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -431,7 +525,7 @@ struct SIGDetails: View {
 struct ArrowLabel: View {
     @Binding var hasScrolled: Bool
     @State private var isVisible = true
-
+    
     var body: some View {
         VStack {
             if !hasScrolled {
@@ -462,7 +556,7 @@ struct ArrowLabel: View {
 struct Description: View {
     @State private var isExpanded = false
     var SIG: SIGModel
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -470,17 +564,17 @@ struct Description: View {
                     .font(.title2)
                     .bold()
             }
-
+            
             Text("What is TrApple?")
                 .font(.footnote)
                 .foregroundColor(.gray)
-
+            
             HStack(alignment: .bottom) {
                 Text(SIG.desc)
                     .font(.callout)
                     .lineLimit(isExpanded ? nil : 3)
                     .animation(.easeInOut, value: isExpanded)
-
+                
                 Button(action: {
                     isExpanded.toggle()
                 }) {
@@ -520,14 +614,14 @@ struct NextEvent: View {
                 .font(.title2)
                 .bold()
                 .padding(.horizontal)
-
+            
             Text("HAPPENING NOW")
                 .font(.caption)
                 .foregroundColor(.blue)
                 .bold()
                 .padding(.horizontal)
                 .padding(.top, 8)
-
+            
             ZStack(alignment: .bottomLeading) {
                 Image("tes2")
                     .resizable()
@@ -562,7 +656,7 @@ struct NextEvent: View {
                 .padding()
             }
             
-
+            
         }
     }
 }
@@ -587,9 +681,9 @@ struct PastEventView: View {
         
         return nil
     }
-
+    
     @State private var currentIndex = 0
-
+    
     
     // FIXME: Correct the size of tabview container
     var body: some View {
@@ -598,7 +692,7 @@ struct PastEventView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-
+            
             if let events = pastEvents {
                 VStack {
                     TabView(selection: $currentIndex) {
@@ -689,17 +783,17 @@ struct PastEvent {
 // MARK: - Group Link
 struct CopyLink: View {
     @State private var isCopied = false
-
+    
     let groupLink = "https://bit.ly"
-
+    
     var body: some View {
         Button(action: {
             UIPasteboard.general.string = groupLink
-
+            
             withAnimation(.easeInOut(duration: 2)) {
                 isCopied = true
             }
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 withAnimation(.easeInOut(duration: 2)) {
                     isCopied = false
@@ -736,7 +830,7 @@ struct VisualEffectBlur: UIViewRepresentable {
         let blurView = UIVisualEffectView(effect: blurEffect)
         return blurView
     }
-
+    
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {}
 }
 
