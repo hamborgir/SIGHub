@@ -700,7 +700,7 @@ struct NextEvent: View {
                     .foregroundColor(.gray)) {
                 }
                 .backgroundStyle(Color.white)
-                .padding(.top, -10)
+//                .padding(.top, -10)
             }
         }
     }
