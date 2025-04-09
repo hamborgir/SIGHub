@@ -187,6 +187,7 @@ struct SpotlightView: View {
     private var eventList: [EventModel] = EventModel.eventList
     private var isNearestEventAvailable: Bool { !nearestEventList.isEmpty }
     
+    
     private var nearestEventList: [EventModel] {
         let N : Int = 7 // days to consider
         
@@ -287,7 +288,8 @@ struct SIGCategorizedView: View {
                                 .foregroundColor(.black)
                             
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.accentColor)
+                                .fontWeight(.bold)
                                 .padding(.leading, 0)
                         }
                     }

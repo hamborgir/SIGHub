@@ -33,8 +33,8 @@ struct SIGCard: View {
                     .font(.headline)
                     .foregroundColor(.black)
                 Text(SIG.session)
-                    .font(.caption2)
-                    .foregroundColor(.black)
+                    .font(.caption)
+                    .foregroundColor(.orange)
             }
             .frame(maxWidth:.infinity, alignment: .topLeading)
             
