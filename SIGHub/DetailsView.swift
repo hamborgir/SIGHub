@@ -376,7 +376,7 @@ struct NextEvent: View {
                     nearestEvents.append(event)
                 }
             }
-            return nearestEvents
+            return nearestEvents.isEmpty ? nil : nearestEvents
         }
         
         return nil
@@ -559,7 +559,7 @@ struct PastEventView: View {
                     pastEvents.append(event)
                 }
             }
-            return pastEvents
+            return pastEvents.isEmpty ? nil : pastEvents
         }
         
         return nil
