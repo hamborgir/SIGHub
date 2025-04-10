@@ -240,10 +240,6 @@ struct VideoHeader: View {
                         .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
                         .shadow(radius: 5)
                         .padding(.bottom, 25)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.white.opacity(0.15), lineWidth: 0.5)
-                        )
                     
                     Text(SIG.realName.uppercased())
                         .font(.caption2.weight(.semibold))
@@ -456,8 +452,8 @@ struct popup: View {
                     ZStack(alignment: .topLeading) {
                         Image(event.SIG!.image)
                             .resizable()
-                            .aspectRatio(1, contentMode: .fill)
-                            .frame(height: 300)
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 380,height: 300)
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
                     }
