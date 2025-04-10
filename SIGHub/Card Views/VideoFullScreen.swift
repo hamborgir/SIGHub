@@ -52,7 +52,9 @@ struct VideoFullScreen: View {
                         }) {
                             Image(systemName: "xmark")
                                 .font(.title2)
+                                .frame(width: 25, height: 25)
                                 .foregroundColor(.white)
+                                .padding(.top, 2)
                         }
 
                         Spacer()
